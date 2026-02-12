@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>MediConnect – Blog Article</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- SAME MODERN STYLES AS INDEX.HTML ----- */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #0f172a;
+            --accent: #06b6d4;
+            --soft-bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-md: 0 20px 30px -10px rgba(0,0,0,0.1);
+            --radius: 24px;
+            --radius-sm: 16px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: var(--soft-bg);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+        .container {
+            width: 92%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: white;
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+        }
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .article-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+        .article-title {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        .article-content {
+            color: #334155;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+        .article-content ul, .article-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .article-content a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .not-found {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        footer {
+            background: var(--secondary);
+            color: #cbd5e1;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-radius: 40px 40px 0 0;
+        }
+        @media (max-width: 640px) {
+            .logo { font-size: 1.5rem; }
+            .article-title { font-size: 1.6rem; }
+            .article-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">MediConnect</a>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="articleContainer" class="article-card">
+            <!-- Article will be injected here -->
+            <div id="loading" style="text-align: center; padding: 2rem;">
+                <div class="loader" style="border:4px solid #f1f5f9; border-top-color: #2563eb; width: 40px; height: 40px; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                <p style="margin-top: 1rem; color: #64748b;">Loading article...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 0.5rem;">MediConnect – Evidence‑based health information</p>
+            <p style="font-size: 0.85rem; opacity: 0.8;">© 2025 • Always consult a doctor.</p>
+        </div>
+    </footer>
+
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <script>
+        // ---------- COMPLETE BLOG ARTICLES DATABASE ----------
+        const blogArticles = [
+            {
+                id: 1,
+                title: "Research Roundup: Latest Breakthroughs in Diabetes Care",
+                content: `<p>This month's research roundup highlights three key studies published in leading medical journals:</p>
+                <ul>
+                    <li><strong>Continuous Glucose Monitors (CGM)</strong> – A large meta-analysis confirms that CGM use reduces HbA1c by an average of 0.8% in type 2 diabetes patients not on insulin.</li>
+                    <li><strong>SGLT2 Inhibitors</strong> – New real-world data shows SGLT2 inhibitors lower cardiovascular death risk by 23% in diabetic patients with heart failure.</li>
+                    <li><strong>Plant‑Based Diets</strong> – A 12-week RCT found that a low-fat vegan diet improved insulin sensitivity and promoted weight loss compared to a conventional diabetic diet.</li>
+                </ul>
+                <p><a href="#" target="_blank">Read the full study summaries (external link)</a></p>`
+            },
+            {
+                id: 2,
+                title: "Myths and Misconceptions About Vaccines",
+                content: `<p><strong>Myth 1: Vaccines cause autism.</strong> This myth originated from a fraudulent 1998 study that has been retracted. Dozens of large-scale studies involving millions of children have found no link.</p>
+                <p><strong>Myth 2: Natural immunity is better than vaccine immunity.</strong> While natural infection can produce strong immunity, it comes at the risk of severe illness, hospitalisation, or death. Vaccines provide protection without the dangers.</p>
+                <p><strong>Myth 3: Vaccines contain harmful toxins.</strong> Vaccine ingredients (like aluminium salts) are used in minute amounts and have been rigorously tested for safety. The amount of aluminium in vaccines is far less than what is present in breast milk or infant formula.</p>
+                <p>For more information, visit the <a href="#" target="_blank">WHO vaccine safety page</a>.</p>`
+            },
+            {
+                id: 3,
+                title: "National Health Observances: October Awareness Days",
+                content: `<p><strong>Breast Cancer Awareness Month</strong> – Wear pink, schedule a mammogram, and support research. Early detection saves lives.</p>
+                <p><strong>World Mental Health Day (Oct 10)</strong> – This year's theme is 'Mental Health at Work'. Employers are encouraged to create supportive environments.</p>
+                <p><strong>World Stroke Day (Oct 29)</strong> – Learn the FAST signs (Face, Arms, Speech, Time). Strokes are treatable if caught early.</p>
+                <p>Check our calendar for upcoming observances and join local events near you.</p>`
+            },
+            {
+                id: 4,
+                title: "Living with Epilepsy: A Patient's Story",
+                content: `<p>“I was 19 when I had my first tonic-clonic seizure in a college library. The diagnosis of epilepsy felt like a life sentence. But today, six years later, I’m a volunteer for the Epilepsy Foundation and my seizures are well controlled with medication.”</p>
+                <p>Riya’s story reminds us that a chronic condition does not define a person. With proper treatment and support, individuals with epilepsy lead full, productive lives.</p>
+                <p><a href="#" target="_blank">Read more patient stories</a></p>`
+            },
+            {
+                id: 5,
+                title: "Q&A with the American Lung Association",
+                content: `<p><strong>Q: Who should get screened for lung cancer?</strong><br>Adults aged 50–80 with a 20 pack‑year smoking history and who currently smoke or have quit within the past 15 years.</p>
+                <p><strong>Q: How can individuals improve indoor air quality?</strong><br>Use HEPA filters, avoid smoking indoors, test for radon, and reduce VOCs from paints and cleaners.</p>
+                <p><strong>Q: What is your top advocacy priority?</strong><br>Increasing federal funding for tobacco prevention and cessation programs.</p>`
+            },
+            {
+                id: 6,
+                title: "Clinical Trials: What You Need to Know",
+                content: `<p><strong>What is a clinical trial?</strong> A research study that tests new treatments or interventions in volunteers.</p>
+                <p><strong>Why participate?</strong> Access to cutting‑edge therapies, close monitoring by specialists, and contribution to science.</p>
+                <p><strong>Common concerns:</strong> Placebo groups – you’ll always be told if placebos are used; safety – trials follow strict protocols and ethics boards.</p>
+                <p>Find trials at <a href="#" target="_blank">ClinicalTrials.gov</a>.</p>`
+            },
+            {
+                id: 7,
+                title: "Frequently Asked Questions About Cholesterol",
+                content: `<p><strong>Q: What’s the difference between LDL and HDL?</strong> LDL ('bad') carries cholesterol to arteries; HDL ('good') carries it away to the liver.</p>
+                <p><strong>Q: Can eating eggs raise cholesterol?</strong> For most people, dietary cholesterol has a small impact – saturated and trans fats are bigger culprits.</p>
+                <p><strong>Q: How often should I get tested?</strong> Adults over 20 should have a lipid panel every 4‑6 years, or more often if at risk.</p>`
+            },
+            {
+                id: 8,
+                title: "Medical Jargon Explained: 10 Terms You Should Know",
+                content: `<ul>
+                    <li><strong>Benign</strong> – Not cancerous; does not spread.</li>
+                    <li><strong>Malignant</strong> – Cancerous; can invade nearby tissue.</li>
+                    <li><strong>Idiopathic</strong> – Cause unknown.</li>
+                    <li><strong>Prognosis</strong> – Likely course of a disease.</li>
+                    <li><strong>Edema</strong> – Swelling from fluid retention.</li>
+                    <li><strong>Erythema</strong> – Redness of the skin.</li>
+                    <li><strong>Hypertension</strong> – High blood pressure.</li>
+                    <li><strong>Hypotension</strong> – Low blood pressure.</li>
+                    <li><strong>Biopsy</strong> – Removal of tissue for examination.</li>
+                    <li><strong>Chronic</strong> – Long‑lasting (opposite of acute).</li>
+                </ul>`
+            },
+            {
+                id: 9,
+                title: "10 Tips for Managing Migraine at Home",
+                content: `<ol>
+                    <li><strong>Identify triggers</strong> – Keep a headache diary to track foods, stress, sleep, and weather.</li>
+                    <li><strong>Stay hydrated</strong> – Dehydration is a common trigger.</li>
+                    <li><strong>Maintain regular sleep</strong> – Both too little and too much sleep can provoke attacks.</li>
+                    <li><strong>Use cold packs</strong> – Apply to forehead or neck during aura or pain.</li>
+                    <li><strong>Limit screen time</strong> – Blue light can worsen symptoms; use night mode.</li>
+                    <li><strong>Caffeine in moderation</strong> – Can help abort attacks but overuse leads to rebound headaches.</li>
+                    <li><strong>Riboflavin (vitamin B2)</strong> – 400 mg daily may reduce frequency.</li>
+                    <li><strong>Magnesium supplements</strong> – 400‑600 mg daily, especially for menstrual migraine.</li>
+                    <li><strong>Biofeedback and relaxation</strong> – Reduces muscle tension and stress.</li>
+                    <li><strong>Know when to see a doctor</strong> – If headaches change pattern or become more severe.</li>
+                </ol>`
+            },
+            {
+                id: 10,
+                title: "Health Tech Innovators to Watch in 2025",
+                content: `<p><strong>1. NeuroVasc</strong> – Developing a wearable sensor that predicts stroke hours before symptoms appear.</p>
+                <p><strong>2. Respira Health</strong> – FDA‑cleared digital therapeutic for asthma management in children.</p>
+                <p><strong>3. CardioSignal</strong> – Smartphone‑based app that detects atrial fibrillation using gyroscope data.</p>
+                <p><strong>4. MindMend</strong> – AI‑powered chatbot for cognitive behavioural therapy, now covered by several insurers.</p>
+                <p><strong>5. RetinaAI</strong> – Algorithm that screens diabetic retinopathy from retinal photos with 95% accuracy.</p>`
+            },
+            {
+                id: 11,
+                title: "Recap: HIMSS 2025 Key Takeaways",
+                content: `<p><strong>Interoperability finally gains momentum</strong> – Several major EHR vendors pledged to adopt HL7® FHIR® standards by end of 2025.</p>
+                <p><strong>Generative AI in clinical documentation</strong> – Ambient listening tools that draft notes during patient visits are now being deployed in large health systems.</p>
+                <p><strong>Digital health equity</strong> – A recurring theme; new guidelines require patient‑centred design and language accessibility.</p>`
+            },
+            {
+                id: 12,
+                title: "Support Resources for Alzheimer’s Caregivers",
+                content: `<ul>
+                    <li><strong>Alzheimer’s Association 24/7 Helpline</strong> – 800.272.3900 (free, confidential)</li>
+                    <li><strong>ALZConnected</strong> – Online community for caregivers (alzconnected.org)</li>
+                    <li><strong>Caregiver Action Network</strong> – Educational materials and peer support</li>
+                    <li><strong>Local Area Agencies on Aging</strong> – Respite care and financial counselling</li>
+                </ul>`
+            },
+            {
+                id: 13,
+                title: "5 Trends Reshaping Global Health",
+                content: `<p><strong>1. mRNA vaccines beyond COVID</strong> – Trials underway for personalised cancer vaccines and HIV.</p>
+                <p><strong>2. Virtual nursing</strong> – Remote monitoring and telehealth reduce hospital readmissions.</p>
+                <p><strong>3. Green hospitals</strong> – Healthcare systems aiming for net‑zero emissions by 2040.</p>
+                <p><strong>4. GLP‑1 agonists expansion</strong> – Drugs like semaglutide now studied for kidney disease and addiction.</p>
+                <p><strong>5. Community health workers</strong> – Growing recognition of their role in reducing disparities.</p>`
+            },
+            {
+                id: 14,
+                title: "From Webinar to Blog: Repurposing Content",
+                content: `<p>Our recent webinar on 'Telehealth Best Practices' had great attendance, but we wanted to reach those who prefer reading. We:</p>
+                <ol>
+                    <li>Transcribed the recording and extracted key quotes.</li>
+                    <li>Created one long‑form article summarising all takeaways.</li>
+                    <li>Broke out Q&A into a separate 'Frequently Asked Questions' post.</li>
+                    <li>Turned the speaker’s opening story into a patient‑perspective piece.</li>
+                    <li>Compiled resource links mentioned into a downloadable PDF.</li>
+                </ol>
+                <p>Result: 40% increase in organic traffic to the blog section.</p>`
+            },
+            {
+                id: 15,
+                title: "Staying Healthy During Monsoon Season",
+                content: `<p><strong>Waterborne illnesses</strong> – Drink boiled or filtered water; avoid street food with raw chutneys.</p>
+                <p><strong>Dengue and malaria</strong> – Remove stagnant water, use mosquito nets, wear full‑sleeve clothing.</p>
+                <p><strong>Skin and hair care</strong> – Fungal infections thrive in humidity; keep skin dry, use antifungal powder.</p>`
+            },
+            {
+                id: 16,
+                title: "Caregiver Corner: Avoiding Burnout",
+                content: `<p><strong>Accept help</strong> – When someone asks 'What can I do?', give a specific task (e.g., pick up groceries).</p>
+                <p><strong>Respite breaks</strong> – Even 30 minutes a day for yourself can restore energy.</p>
+                <p><strong>Support groups</strong> – Sharing experiences with others who understand is invaluable.</p>`
+            },
+            {
+                id: 17,
+                title: "Press Release: MediConnect Partners with Apollo Hospitals",
+                content: `<p>As of February 2025, MediConnect users can now see real‑time bed availability in select Apollo emergency departments. This pilot program will expand to 20 cities by year end.</p>
+                <p>“This partnership aligns with our mission to make healthcare accessible and reduce emergency wait times,” said Dr. Anil Sharma, Medical Director at Apollo.</p>`
+            },
+            {
+                id: 18,
+                title: "Deep Dive: How GLP‑1 Agonists Work for Weight Loss",
+                content: `<p>GLP‑1 agonists mimic a hormone called glucagon‑like peptide‑1 that:</p>
+                <ul>
+                    <li>Stimulates insulin secretion when blood sugar is high.</li>
+                    <li>Slows gastric emptying (food stays in stomach longer → feeling full).</li>
+                    <li>Acts on brain receptors to reduce appetite.</li>
+                </ul>
+                <p>Approved doses for weight loss (e.g., Wegovy 2.4 mg) are higher than those for diabetes, and studies show average weight loss of 15%.</p>`
+            },
+            {
+                id: 19,
+                title: "Small Cell vs Non‑Small Cell Lung Cancer",
+                content: `<p><strong>Non‑small cell lung cancer (NSCLC)</strong> – About 85% of lung cancers. Subtypes include adenocarcinoma, squamous cell, large cell. Often treated with surgery, targeted therapy, immunotherapy.</p>
+                <p><strong>Small cell lung cancer (SCLC)</strong> – 15%, more aggressive, strongly linked to smoking, usually metastasised by diagnosis. Primary treatment is chemotherapy + radiation.</p>
+                <p>Biomarker testing (EGFR, ALK, PD‑L1) is crucial for NSCLC; SCLC is increasingly studied for DLL3 targeted agents.</p>`
+            },
+            {
+                id: 20,
+                title: "Guest Post: Nutrition Tips for Cancer Survivors",
+                content: `<p>“After chemotherapy, many survivors struggle with taste changes, fatigue, and fear of certain foods. My top three tips:</p>
+                <ol>
+                    <li><strong>Protein at every meal</strong> – Helps repair tissues. Eggs, Greek yoghurt, lentils, tofu.</li>
+                    <li><strong>Stay hydrated</strong> – Soups, smoothies, and infused water can be easier than plain water.</li>
+                    <li><strong>Don’t fear soy</strong> – Current evidence shows moderate soy consumption is safe for breast cancer survivors.”</li>
+                </ol>
+                <p>Laura practices at City of Hope and specialises in oncology nutrition.</p>`
+            }
+        ];
+
+        // ---------- DISPLAY ARTICLE BASED ON URL ID ----------
+        function displayArticle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = parseInt(urlParams.get('id'));
+            const container = document.getElementById('articleContainer');
+            const loading = document.getElementById('loading');
+
+            if (!id) {
+                // No ID provided – show index or error
+                container.innerHTML = `<div class="not-found">
+                    <i class="fas fa-newspaper" style="font-size: 3rem; color: #94a3b8;"></i>
+                    <h2 style="margin: 1rem 0;">No article selected</h2>
+                    <p style="color: #64748b;">Please choose an article from the <a href="index.html" style="color: var(--primary);">homepage</a>.</p>
+                </div>`;
+                return;
+            }
+
+            const article = blogArticles.find(a => a.id === id);
+            
+            if (article) {
+                container.innerHTML = `
+                    <h1 class="article-title">${article.title}</h1>
+                    <div class="article-content">${article.content}</div>
+                    <p style="margin-top: 2rem; color: #64748b; font-style: italic; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                        <i class="fas fa-info-circle"></i> This information is for educational purposes only. Always consult a healthcare professional.
+                    </p>
+                `;
+            } else {
+                container.innerHTML = `<div class="not-found">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e67e22;"></i>
+                    <h2 style="margin: 1rem 0;">Article not found</h2>
+                    <p style="color: #64748b;">Sorry, we couldn't find that article. <a href="index.html" style="color: var(--primary);">Return to homepage</a>.</p>
+                </div>`;
+            }
+        }
+
+        // ---------- RUN ON PAGE LOAD ----------
+        window.onload = displayArticle;
+    </script>
+</body>
+</html>

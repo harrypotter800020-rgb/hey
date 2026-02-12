@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediConnect AI Consultancy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #0f172a;
+      --accent: #06b6d4;
+      --soft-bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-border: rgba(255, 255, 255, 0.35);
+      --muted: #64748b;
+      --shadow-sm: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 20px 30px -10px rgba(15, 23, 42, 0.15);
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 5%, rgba(6, 182, 212, 0.18), transparent 45%),
+        var(--soft-bg);
+      color: var(--secondary);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    nav {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: white;
+      padding: 0.95rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 0.48rem 1rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.86rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: background 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.82rem;
+      color: #dbeafe;
+    }
+
+    main {
+      width: 92%;
+      max-width: 1100px;
+      margin: 1.5rem auto 2rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.25rem;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .info-panel {
+      padding: 1.35rem;
+      height: fit-content;
+      position: sticky;
+      top: 88px;
+    }
+
+    .info-panel h1 {
+      font-size: 1.25rem;
+      line-height: 1.25;
+      margin-bottom: 0.65rem;
+    }
+
+    .info-panel p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 0.95rem;
+    }
+
+    .info-list {
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+      color: #1e293b;
+      font-size: 0.92rem;
+    }
+
+    .info-list li {
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      padding: 0.62rem 0.75rem;
+      border-radius: 10px;
+    }
+
+    .chat-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 76vh;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header small {
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .chat-container {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(248,250,252,0.65) 0%, rgba(241,245,249,0.65) 100%);
+    }
+
+    .message {
+      margin: 0.55rem 0;
+      max-width: 78%;
+      padding: 0.7rem 0.85rem;
+      border-radius: var(--radius-sm);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      box-shadow: 0 8px 20px -15px rgba(15, 23, 42, 0.35);
+    }
+
+    .user {
+      margin-left: auto;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: white;
+      border-bottom-right-radius: 6px;
+    }
+
+    .ai {
+      margin-right: auto;
+      background: white;
+      color: #0f172a;
+      border: 1px solid #dbeafe;
+      border-bottom-left-radius: 6px;
+    }
+
+    .system {
+      margin: 0.7rem auto;
+      color: var(--muted);
+      font-size: 0.84rem;
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px dashed rgba(100, 116, 139, 0.35);
+      border-radius: 999px;
+      max-width: max-content;
+      padding: 0.36rem 0.72rem;
+      box-shadow: none;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.95rem;
+      border-top: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    #userInput {
+      flex: 1;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 0.82rem 1rem;
+      font-size: 0.98rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: white;
+    }
+
+    #userInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    #sendBtn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.78rem 1.2rem;
+      min-width: 120px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease;
+      box-shadow: 0 10px 18px -10px rgba(37, 99, 235, 0.7);
+    }
+
+    #sendBtn:hover {
+      background: var(--primary-dark);
+    }
+
+    #sendBtn:active {
+      transform: translateY(1px);
+    }
+
+    #sendBtn:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+    }
+
+
+    footer {
+      background: var(--secondary);
+      color: #cbd5e1;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: auto;
+      border-radius: 40px 40px 0 0;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    @media (max-width: 940px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .info-panel {
+        position: static;
+      }
+
+      .chat-card {
+        min-height: 72vh;
+      }
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        padding: 0.9rem 1rem;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+      }
+
+      .badge {
+        display: none;
+      }
+
+      .back-btn {
+        padding: 0.42rem 0.8rem;
+        font-size: 0.78rem;
+      }
+
+      .message {
+        max-width: 90%;
+      }
+
+      #sendBtn {
+        min-width: 92px;
+        padding: 0.78rem 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-content">
+      <a href="index.html" class="logo">MediConnect</a>
+      <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+      <div class="badge">AI Consultancy</div>
+    </div>
+  </nav>
+
+  <main>
+    <aside class="card info-panel">
+      <h1>AI Health Consultation</h1>
+      <p>Get instant general guidance for common symptoms and wellness concerns.</p>
+      <ul class="info-list">
+        <li>🩺 General advice only — not a final diagnosis.</li>
+        <li>🚨 For emergencies, contact local emergency services.</li>
+        <li>💬 Share symptoms clearly for better responses.</li>
+      </ul>
+    </aside>
+
+    <section class="card chat-card">
+      <div class="chat-header">
+        <span>Consultancy Chat</span>
+        <small>Online Assistant</small>
+      </div>
+
+      <div class="chat-container" id="chatBox">
+        <div class="message ai">
+          Hello! I provide general medical information only. Please describe your symptoms.
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="Describe your symptoms..." />
+        <button id="sendBtn" onclick="sendMessage()">Send</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;">MediConnect – Evidence-based health support</p>
+      <p style="font-size: 0.85rem; opacity: 0.8;">© 2025 • Always consult a qualified doctor.</p>
+    </div>
+  </footer>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function appendMessage(text, role = "ai") {
+      const msg = document.createElement("div");
+      msg.className = `message ${role}`;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage(message, "user");
+      input.value = "";
+      sendBtn.disabled = true;
+
+      const thinking = document.createElement("div");
+      thinking.className = "message system";
+      thinking.textContent = "AI is thinking...";
+      chatBox.appendChild(thinking);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const response = await fetch("/.netlify/functions/consult", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query: message })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        thinking.remove();
+
+        if (!response.ok) {
+          appendMessage(data.error || data.details || "Unable to get AI response right now.", "ai");
+          return;
+        }
+
+        appendMessage(data.reply || "No response received from AI.", "ai");
+      } catch (error) {
+        thinking.remove();
+        appendMessage("Server connection error. Please try again.", "ai");
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    }
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
