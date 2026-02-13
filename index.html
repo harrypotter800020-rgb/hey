@@ -1,0 +1,3768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>MediConnect – Home • Emergency • 20 Blogs</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet (FREE, no API key) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* ----- MODERN VARIABLES ----- */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #0f172a;
+            --accent: #06b6d4;
+            --soft-bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-md: 0 20px 30px -10px rgba(0,0,0,0.1);
+            --radius: 24px;
+            --radius-sm: 16px;
+            --footer-image: url('https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1600&q=80');
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: var(--soft-bg);
+            color: var(--secondary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            width: 92%;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* ----- GLASS NAVIGATION ----- */
+        nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: white;
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-badge {
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(4px);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* ----- SCROLLABLE TABS (MOBILE FRIENDLY) ----- */
+        .tabs-wrapper {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 70px;
+            z-index: 900;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tabs-wrapper::-webkit-scrollbar { display: none; }
+        .tabs {
+            display: inline-flex;
+            padding: 0.5rem 1rem;
+            gap: 0.5rem;
+        }
+        .tab {
+            padding: 0.7rem 1.3rem;
+            border: none;
+            background: transparent;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .tab i { font-size: 1rem; }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+        }
+
+        /* ----- CONTENT SECTIONS ----- */
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+        .tab-content.active { display: block; }
+
+        /* ----- SECTION BACKGROUNDS ----- */
+        .section-bg {
+            position: relative;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-top: 1rem;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .section-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            transform: scale(1.03);
+        }
+        .section-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(15, 23, 42, 0.72), rgba(30, 64, 175, 0.45));
+            z-index: -1;
+        }
+        .section-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .section-bg h2,
+        .section-bg p,
+        .section-bg label {
+            color: #e2e8f0;
+        }
+        .section-bg .card h2,
+        .section-bg .card h3,
+        .section-bg .card p,
+        .section-bg .card label,
+        .section-bg .card li {
+            color: #1e293b;
+        }
+        .section-bg .card .detail-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            display: inline-block;
+            margin: 0.7rem 0 0.2rem;
+        }
+        #home.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80');
+        }
+        #disease.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=1600&q=80');
+        }
+        #medicine.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1600&q=80');
+        }
+        #nearby.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1600&q=80');
+        }
+        #emergency.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1600&q=80');
+        }
+        #blogs.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80');
+        }
+        #reminders.section-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1600&q=80');
+        }
+
+        .service-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ----- MODERN CARDS (GLASSMORPHISM) ----- */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            margin-bottom: 1.5rem;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+            border-color: rgba(37,99,235,0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+        }
+
+        /* ----- BUTTONS & INPUTS ----- */
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 16px -6px rgba(37,99,235,0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+        input, select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1rem;
+            background: white;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        /* ----- MAP CONTAINER (Leaflet) ----- */
+        #map {
+            height: 380px;
+            width: 100%;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+            z-index: 1;
+        }
+
+        /* ----- 3-OPTION SELECTOR (PILLS) ----- */
+        .option-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .option-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .option-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .option-btn i { font-size: 1.1rem; }
+
+        /* ----- RESULT LIST ITEMS (with directions button) ----- */
+        .place-item {
+            background: white;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 0.8rem;
+            border-radius: var(--radius-sm);
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: 0.2s;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .place-item:hover {
+            background: #f1f5f9;
+        }
+        .place-info {
+            flex: 1;
+        }
+        .place-actions {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .distance-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .direction-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+        .direction-btn:hover {
+            background: #059669;
+            transform: scale(0.98);
+        }
+
+        /* ----- EMERGENCY CARDS (click-to-call) ----- */
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+        }
+        .emergency-card {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: 0.2s;
+        }
+        .emergency-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .emergency-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #dc2626;
+            line-height: 1.2;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #fee2e2;
+        }
+        .emergency-number:hover {
+            background: #fecaca;
+        }
+        .emergency-number i {
+            font-size: 1.1rem;
+            color: #059669;
+        }
+
+        /* ----- BLOG GRID (20 boxes linking to blog.html) ----- */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .blog-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            transition: 0.2s;
+            border-top: 4px solid var(--primary);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .blog-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+        .blog-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+        .blog-card .read-more {
+            margin-top: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* ----- REMINDERS ----- */
+        .reminder-item {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 40px;
+            margin-bottom: 0.7rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* ----- LOADER ----- */
+        .loader {
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ----- FOOTER ----- */
+        footer {
+            position: relative;
+            background: var(--secondary);
+            color: #cbd5e1;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: auto;
+            border-radius: 40px 40px 0 0;
+            overflow: hidden;
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.86)), var(--footer-image);
+            background-size: cover;
+            background-position: center;
+        }
+        footer .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 640px) {
+            .logo { font-size: 1.5rem; }
+            .nav-badge { display: none; }
+            .card { padding: 1.2rem; }
+            .emergency-number { font-size: 1.6rem; }
+            .place-item { flex-direction: column; align-items: flex-start; }
+            .place-actions { margin-top: 0.8rem; width: 100%; justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">MediConnect</a>
+            <div class="nav-badge">
+                <i class="fas fa-map"></i> INDIA 
+                <i class="fas fa-phone-alt" style="margin-left:0.8rem;"></i> Tap to Call
+                <i class="fas fa-bell" style="margin-left:0.8rem;"></i> Sound Alerts
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tabs (scrollable) -->
+    <div class="tabs-wrapper">
+        <div class="container" style="padding:0;">
+            <div class="tabs">
+                <button class="tab active" onclick="openTab('home')"><i class="fas fa-home"></i> Home</button>
+                <button class="tab" onclick="openTab('disease')"><i class="fas fa-magnifying-glass"></i> Disease</button>
+                <button class="tab" onclick="openTab('medicine')"><i class="fas fa-pills"></i> Medicine</button>
+                <button class="tab" onclick="openTab('nearby')"><i class="fas fa-hospital"></i> Nearby</button>
+                <button class="tab" onclick="openTab('emergency')"><i class="fas fa-truck-medical"></i> Emergency</button>
+               <a href="consultancy.html" class="tab" style="text-decoration: none; ...">👨‍⚕️ Consult</a>
+                <button class="tab" onclick="openTab('blogs')"><i class="fas fa-newspaper"></i> Blogs</button>
+                <button class="tab" onclick="openTab('reminders')"><i class="fas fa-clock"></i> Reminders</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== HOME TAB ========= -->
+    <div id="home" class="tab-content active container section-bg">
+        <div class="card" style="background: linear-gradient(135deg, #2563eb, #1e40af); color: white; border: none;">
+            <h1 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">MediConnect</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 1.8rem;">Tap to call emergency • Sound reminders • 10km medical search • Health articles & Blog </p>
+            <div style="display: flex; gap: 0.6rem; max-width: 600px; flex-wrap: wrap;">
+                <input type="text" id="quickSearch" placeholder="Search disease or medicine..." style="flex: 1; background: rgba(255,255,255,0.9);">
+                <button class="btn" onclick="quickSearch()" style="background: white; color: #1e40af;"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+        <div class="service-count"><i class="fas fa-layer-group"></i> All Medical Related Services Available</div>
+        <h2 style="font-size: 1.8rem; font-weight: 600; margin: 2rem 0 1rem;">Free services</h2>
+        <div class="grid">
+            <div class="card"><i class="fas fa-book-medical" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">Disease details</h3><p style="color: #475569;">Symptoms, causes, treatment, prevention.</p></div>
+            <div class="card"><i class="fas fa-pills" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">Medicine details</h3><p style="color: #475569;">Uses, dosage, side effects, price estimate.</p></div>
+            <div class="card"><i class="fas fa-map-marked-alt" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">10km Nearby + Directions</h3><p style="color: #475569;">Hospitals, clinics, pharmacies with one‑tap navigation.</p></div>
+            <div class="card"><i class="fas fa-ambulance" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">Emergency Call</h3><p style="color: #475569;">Tap numbers to call ambulance, police, fire – India default.</p></div>
+            <div class="card"><i class="fas fa-user-doctor" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">👨‍⚕️ Consult</h3><p style="color: #475569;">Talk to healthcare experts from our dedicated consultancy page.</p></div>
+            <div class="card"><i class="fas fa-newspaper" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">Health Blogs</h3><p style="color: #475569;">Read 20+ educational health and wellness articles.</p></div>
+            <div class="card"><i class="fas fa-clock" style="font-size: 2.2rem; color: var(--primary);"></i><h3 style="margin: 1rem 0 0.5rem;">Medicine Reminders</h3><p style="color: #475569;">Set daily reminders with sound and notification alerts.</p></div>
+        </div>
+    </div>
+
+    <!-- ========== DISEASE TAB ========= -->
+    <div id="disease" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">🔍 Disease details</h2>
+        <div style="display: flex; gap: 0.6rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <input type="text" id="diseaseSearch" placeholder="e.g., Diabetes, Malaria, COVID-19" style="flex: 2;">
+            <button class="btn" onclick="searchDisease()"><i class="fas fa-search"></i> Search</button>
+        </div>
+        <div id="diseaseResult"></div>
+        <div id="diseaseLoader" class="loader" style="display:none;"></div>
+    </div>
+
+    <!-- ========== MEDICINE TAB ========= -->
+    <div id="medicine" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">💊 Medicine details</h2>
+        <div style="display: flex; gap: 0.6rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <input type="text" id="medicineSearch" placeholder="e.g., Paracetamol, Metformin" style="flex: 2;">
+            <button class="btn" onclick="searchMedicine()"><i class="fas fa-search"></i> Search</button>
+        </div>
+        <div id="medicineResult"></div>
+        <div id="medicineLoader" class="loader" style="display:none;"></div>
+    </div>
+
+    <!-- ========== NEARBY TAB – 10km, Directions, 3 Options ========= -->
+    <div id="nearby" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">🏥 10km Medical Facilities – with Directions</h2>
+        <p style="color: #00000c; margin-bottom: 1rem;"><i class="fas fa-location-dot"></i> Auto‑search when you open this tab. <strong style="background: #a7bba7; padding: 0.2rem 0.8rem; border-radius: 20px;">✓ 10km radius • Closest first • One‑tap navigation</strong></p>
+        
+        <div class="option-selector">
+            <div id="optHospital" class="option-btn active" onclick="setPlaceType('hospital')">
+                <i class="fas fa-hospital"></i> Hospitals
+            </div>
+            <div id="optClinic" class="option-btn" onclick="setPlaceType('clinic')">
+                <i class="fas fa-clinic-medical"></i> Clinics
+            </div>
+            <div id="optPharmacy" class="option-btn" onclick="setPlaceType('pharmacy')">
+                <i class="fas fa-prescription-bottle"></i> Medical Stores
+            </div>
+        </div>
+
+        <div id="map"></div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span style="background: #e2e8f0; padding: 0.3rem 1rem; border-radius: 30px;">
+                <span id="placeCount">0</span> <span id="placeTypeLabel">hospitals</span> found within 10km
+            </span>
+            <button class="btn" onclick="searchNearby()" style="background: var(--secondary);">
+                <i class="fas fa-rotate"></i> Refresh
+            </button>
+        </div>
+        
+        <ul id="placeList" style="list-style: none;"></ul>
+    </div>
+
+    <!-- ========== EMERGENCY TAB – CLICK TO CALL ========= -->
+    <div id="emergency" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">🚑 Emergency numbers – Tap to Call</h2>
+        <div class="emergency-grid">
+            <div class="emergency-card">
+                <h3 style="margin-bottom: 0.5rem;">🚑 Ambulance</h3>
+                <a id="ambulanceLink" href="tel:102" class="emergency-number">102 <i class="fas fa-phone-alt"></i></a>
+            </div>
+            <div class="emergency-card">
+                <h3 style="margin-bottom: 0.5rem;">👮 Police</h3>
+                <a id="policeLink" href="tel:100" class="emergency-number">100 <i class="fas fa-phone-alt"></i></a>
+            </div>
+            <div class="emergency-card">
+                <h3 style="margin-bottom: 0.5rem;">🔥 Fire</h3>
+                <a id="fireLink" href="tel:101" class="emergency-number">101 <i class="fas fa-phone-alt"></i></a>
+            </div>
+            <div class="emergency-card">
+                <h3 style="margin-bottom: 0.5rem;">☣ Poison</h3>
+                <a id="poisonLink" href="tel:1800116111" class="emergency-number">1800-11-6111 <i class="fas fa-phone-alt"></i></a>
+            </div>
+        </div>
+        <p style="margin-top: 1rem; color: #f8f8f8;"><i class="fas fa-info-circle"></i> Tap on number to call (mobile). </p>
+    </div>
+    <!-- ========== BLOGS TAB – 20 BOXES linking to blog.html ========= -->
+    <div id="blogs" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">📚 Health blog & Articles</h2>
+        <p style="color: #ececed; margin-bottom: 1.5rem;">Read articles and Blogs related to diffrent Health Tips, Medicine, Hospitals, etc.</p>
+        <div class="blog-grid" id="blogGrid"></div>
+    </div>
+
+    <!-- ========== REMINDERS – with NOTIFICATION + SOUND ========= -->
+    <div id="reminders" class="tab-content container section-bg">
+        <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">⏰ Medicine reminders </h2>
+        <div class="card" style="background: white;">
+            <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: flex-end;">
+                <div style="flex: 2;">
+                    <label style="font-size: 0.9rem; color: #475569;">Medicine name</label>
+                    <input type="text" id="reminderMed" placeholder="e.g., Paracetamol">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.9rem; color: #475569;">Time</label>
+                    <input type="time" id="reminderTime">
+                </div>
+                <div style="flex: 0 0 auto;">
+                    <button class="btn" onclick="addReminder()" style="margin-top: 0.5rem;"><i class="fas fa-plus"></i> Set Reminder</button>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; color: #475569; font-size: 0.9rem;"><i class="fas fa-bell"></i> You'll get a notification on time .</p>
+        </div>
+        <div id="reminderList"></div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 0.5rem;">MediConnect – INDIA • Tap to call emergency • Sound reminders • Health related full‑articles & Blog</p>
+            <p style="font-size: 0.85rem; opacity: 0.8;">© 2025 - 2026 MediConnect - Empowering Health Through Technology, All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ---------- GLOBAL VARIABLES ----------
+        let map;
+        let userMarker;
+        let userLat = null;
+        let userLon = null;
+        let currentPlaceType = 'hospital';
+        let markersLayer;
+
+        // ---------- STATIC DATABASES (Disease & Medicine) ----------
+        const commonDiseases = [
+            {
+                name: "diabetes",
+                displayName: "Diabetes Mellitus (Type 2)",
+                symptoms: "Increased thirst, frequent urination, hunger, fatigue, blurred vision",
+                causes: "Insulin resistance, genetics, obesity, sedentary lifestyle",
+                prevention: "Healthy diet, regular exercise, weight control, avoid sugar",
+                treatment: "Metformin, insulin therapy, lifestyle modifications"
+            }, {
+                name: "hypertension",
+                displayName: "Hypertension (High BP)",
+                symptoms: "Headaches, dizziness, blurred vision, chest pain",
+                causes: "High salt intake, stress, obesity, genetics",
+                prevention: "Low salt diet, exercise, stress management",
+                treatment: "Amlodipine, Beta-blockers, lifestyle changes"
+            }, {
+                name: "dengue",
+                displayName: "Dengue Fever",
+                symptoms: "High fever, severe headache, joint pain, rash",
+                causes: "Aedes mosquito bite carrying Dengue virus",
+                prevention: "Mosquito nets, repellents, clearing stagnant water",
+                treatment: "Hydration, Paracetamol, platelet monitoring"
+            }, {
+                name: "typhoid",
+                displayName: "Typhoid Fever",
+                symptoms: "High fever, stomach pain, headache, weakness",
+                causes: "Salmonella typhi (contaminated food/water)",
+                prevention: "Hygiene, clean water, vaccination",
+                treatment: "Antibiotics (Azithromycin, Ceftriaxone)"
+            }, {
+                name: "malaria",
+                displayName: "Malaria",
+                symptoms: "Chills, high fever, sweating, shivering",
+                causes: "Anopheles mosquito bite (Plasmodium parasite)",
+                prevention: "Mosquito nets, cleaning drains, repellents",
+                treatment: "Antimalarials (Chloroquine, ACT)"
+            }, {
+                name: "anemia",
+                displayName: "Iron Deficiency Anemia",
+                symptoms: "Fatigue, pale skin, shortness of breath, dizziness",
+                causes: "Lack of iron in diet, blood loss, pregnancy",
+                prevention: "Iron-rich food (spinach, jaggery), supplements",
+                treatment: "Iron tablets, Vitamin C, nutritious diet"
+            }, {
+                name: "asthma",
+                displayName: "Bronchial Asthma",
+                symptoms: "Wheezing, shortness of breath, chest tightness",
+                causes: "Pollution, dust, allergies, genetics",
+                prevention: "Avoiding triggers, wearing masks, no smoking",
+                treatment: "Inhalers, Corticosteroids"
+            }, {
+                name: "tuberculosis",
+                displayName: "Tuberculosis (TB)",
+                symptoms: "Persistent cough (3+ weeks), weight loss, night sweats",
+                causes: "Mycobacterium tuberculosis bacteria",
+                prevention: "BCG vaccine, good ventilation, hygiene",
+                treatment: "DOTS therapy (Rifampicin, Isoniazid)"
+            }, {
+                name: "pcos",
+                displayName: "PCOS (Polycystic Ovary Syndrome)",
+                symptoms: "Irregular periods, acne, weight gain, hair thinning",
+                causes: "Hormonal imbalance, insulin resistance",
+                prevention: "Exercise, balanced diet, weight control",
+                treatment: "Hormone therapy, Metformin, lifestyle changes"
+            }, {
+                name: "jaundice",
+                displayName: "Hepatitis A (Jaundice)",
+                symptoms: "Yellow eyes/skin, dark urine, fatigue, nausea",
+                causes: "Hepatitis virus through contaminated food/water",
+                prevention: "Clean drinking water, hand washing",
+                treatment: "Rest, low-fat diet, hydration"
+            }, {
+                name: "cholera",
+                displayName: "Cholera",
+                symptoms: "Severe watery diarrhea, vomiting, dehydration",
+                causes: "Vibrio cholerae (contaminated water)",
+                prevention: "Boiled water, sanitation, hygiene",
+                treatment: "ORS, Zinc supplements, Antibiotics"
+            }, {
+                name: "hypothyroidism",
+                displayName: "Hypothyroidism",
+                symptoms: "Weight gain, fatigue, cold intolerance, dry skin",
+                causes: "Iodine deficiency, autoimmune response",
+                prevention: "Iodized salt, regular checkups",
+                treatment: "Levothyroxine (Hormone replacement)"
+            }, {
+                name: "acid_reflux",
+                displayName: "GERD (Acid Reflux)",
+                symptoms: "Heartburn, chest pain, difficulty swallowing",
+                causes: "Spicy food, obesity, lying down after meals",
+                prevention: "Small meals, avoid late-night snacks",
+                treatment: "Antacids, Proton pump inhibitors (PPIs)"
+            }, {
+                name: "arthritis",
+                displayName: "Osteoarthritis",
+                symptoms: "Joint pain, stiffness, reduced flexibility",
+                causes: "Aging, joint injury, obesity",
+                prevention: "Regular exercise, maintaining healthy weight",
+                treatment: "Physiotherapy, pain relievers, supplements"
+            }, {
+                name: "migraine",
+                displayName: "Migraine",
+                symptoms: "Severe pulsing headache, sensitivity to light/sound",
+                causes: "Stress, sleep changes, hormonal triggers",
+                prevention: "Regular sleep, stress management",
+                treatment: "Painkillers, Triptans, lifestyle changes"
+            }, {
+                name: "pneumonia",
+                displayName: "Pneumonia",
+                symptoms: "Cough with phlegm, fever, difficulty breathing",
+                causes: "Bacteria, viruses, or fungi in lungs",
+                prevention: "Flu vaccine, hand washing, no smoking",
+                treatment: "Antibiotics, oxygen therapy, rest"
+            }, {
+                name: "chikungunya",
+                displayName: "Chikungunya",
+                symptoms: "Severe joint pain, fever, rash, muscle pain",
+                causes: "Infected mosquito bites",
+                prevention: "Eliminating mosquito breeding sites",
+                treatment: "Rest, fluids, pain relievers"
+            }, {
+                name: "kidney_stones",
+                displayName: "Kidney Stones",
+                symptoms: "Severe side/back pain, painful urination, nausea",
+                causes: "Dehydration, high protein/salt diet",
+                prevention: "Drinking plenty of water, low salt intake",
+                treatment: "Hydration, Lithotripsy, pain management"
+            }, {
+                name: "uti",
+                displayName: "Urinary Tract Infection (UTI)",
+                symptoms: "Burning sensation during urination, frequent urge",
+                causes: "E. coli bacteria infection",
+                prevention: "Hydration, personal hygiene",
+                treatment: "Antibiotics, increased fluid intake"
+            }, {
+                name: "cataract",
+                displayName: "Cataract",
+                symptoms: "Cloudy vision, difficulty seeing at night",
+                causes: "Aging, UV exposure, diabetes",
+                prevention: "Protecting eyes from UV, healthy diet",
+                treatment: "Cataract surgery"
+            }, {
+                name: "constipation",
+                displayName: "Chronic Constipation",
+                symptoms: "Infrequent bowel movements, straining",
+                causes: "Low fiber diet, dehydration, inactivity",
+                prevention: "High fiber food, plenty of water, exercise",
+                treatment: "Laxatives, diet modification"
+            }, {
+                name: "diarrhea",
+                displayName: "Acute Diarrhea",
+                symptoms: "Loose watery stools, cramps, dehydration",
+                causes: "Viral/Bacterial infection, food poisoning",
+                prevention: "Safe food and water, hand washing",
+                treatment: "ORS, Zinc, light diet"
+            }, {
+                name: "piles",
+                displayName: "Hemorrhoids (Piles)",
+                symptoms: "Bleeding during bowel movements, itching, pain",
+                causes: "Chronic constipation, straining, pregnancy",
+                prevention: "High fiber diet, hydration",
+                treatment: "Topical creams, high-fiber diet, surgery"
+            }, {
+                name: "sinusitis",
+                displayName: "Sinusitis",
+                symptoms: "Facial pain, nasal congestion, headache",
+                causes: "Allergies, infections, nasal polyps",
+                prevention: "Avoid allergens, use humidifier",
+                treatment: "Nasal sprays, steam inhalation, antibiotics"
+            }, {
+                name: "eczema",
+                displayName: "Eczema",
+                symptoms: "Itchy, red, and dry skin",
+                causes: "Genetics, immune system triggers, irritants",
+                prevention: "Moisturizing skin, avoiding harsh soaps",
+                treatment: "Steroid creams, antihistamines"
+            }, {
+                name: "common_cold",
+                displayName: "Common Cold",
+                symptoms: "Runny nose, sore throat, sneezing, cough",
+                causes: "Rhinovirus infection",
+                prevention: "Hand hygiene, avoid close contact",
+                treatment: "Rest, fluids, decongestants"
+            }, {
+                name: "flu",
+                displayName: "Influenza (Flu)",
+                symptoms: "Body ache, high fever, fatigue, dry cough",
+                causes: "Influenza virus",
+                prevention: "Annual flu vaccine, hygiene",
+                treatment: "Rest, fluids, antiviral drugs"
+            }, {
+                name: "insomnia",
+                displayName: "Insomnia",
+                symptoms: "Difficulty falling or staying asleep",
+                causes: "Stress, caffeine, irregular sleep habits",
+                prevention: "Sleep schedule, limiting caffeine",
+                treatment: "Melatonin, CBT, lifestyle changes"
+            }, {
+                name: "obesity",
+                displayName: "Obesity",
+                symptoms: "Excessive body fat, breathlessness, snoring",
+                causes: "High calorie intake, lack of exercise",
+                prevention: "Physical activity, balanced diet",
+                treatment: "Dietary changes, exercise, bariatric surgery"
+            }, {
+                name: "gastritis",
+                displayName: "Gastritis",
+                symptoms: "Stomach upset, bloating, burning sensation",
+                causes: "H. pylori infection, excessive alcohol",
+                prevention: "Avoiding spicy food and alcohol",
+                treatment: "Antacids, H2 blockers"
+            }, {
+                name: "chickenpox",
+                displayName: "Chickenpox",
+                symptoms: "Itchy red blisters, fever, fatigue",
+                causes: "Varicella-zoster virus",
+                prevention: "Chickenpox vaccine",
+                treatment: "Antivirals, calamine lotion, rest"
+            }, {
+                name: "measles",
+                displayName: "Measles (Khusra)",
+                symptoms: "Total body rash, fever, cough, red eyes",
+                causes: "Measles virus",
+                prevention: "MMR vaccine",
+                treatment: "Vitamin A, fever reducers, hydration"
+            }, {
+                name: "mumps",
+                displayName: "Mumps (Galshua)",
+                symptoms: "Swollen salivary glands, fever, headache",
+                causes: "Mumps virus",
+                prevention: "MMR vaccine",
+                treatment: "Pain relief, warm/cold packs"
+            }, {
+                name: "tonsillitis",
+                displayName: "Tonsillitis",
+                symptoms: "Swollen tonsils, sore throat, difficulty swallowing",
+                causes: "Viral or bacterial infection",
+                prevention: "Good hygiene, avoid sharing utensils",
+                treatment: "Antibiotics (if bacterial), salt water gargles"
+            }, {
+                name: "bronchitis",
+                displayName: "Bronchitis",
+                symptoms: "Cough with mucus, fatigue, chest discomfort",
+                causes: "Infection or lung irritants like smoke",
+                prevention: "Quit smoking, wear masks in pollution",
+                treatment: "Inhalers, rest, fluids"
+            }, {
+                name: "fatty_liver",
+                displayName: "Fatty Liver Disease",
+                symptoms: "Fatigue, pain in upper right abdomen",
+                causes: "Alcohol, obesity, high sugar diet",
+                prevention: "Weight loss, healthy fats, no alcohol",
+                treatment: "Dietary changes, exercise"
+            }, {
+                name: "gout",
+                displayName: "Gout",
+                symptoms: "Sudden severe joint pain (usually big toe)",
+                causes: "High uric acid in blood",
+                prevention: "Avoid red meat and alcohol, hydration",
+                treatment: "NSAIDs, Uric acid lowering drugs"
+            }, {
+                name: "osteoporosis",
+                displayName: "Osteoporosis",
+                symptoms: "Back pain, easy bone fractures",
+                causes: "Aging, calcium and Vitamin D deficiency",
+                prevention: "Calcium-rich diet, weight-bearing exercise",
+                treatment: "Bisphosphonates, Calcium/Vit D supplements"
+            }, {
+                name: "epilepsy",
+                displayName: "Epilepsy",
+                symptoms: "Seizures, loss of consciousness",
+                causes: "Brain injury, genetics, stroke",
+                prevention: "Preventing head injuries",
+                treatment: "Anti-epileptic drugs (AEDs)"
+            }, {
+                name: "conjunctivitis",
+                displayName: "Conjunctivitis (Pink Eye)",
+                symptoms: "Redness, itching, discharge from eyes",
+                causes: "Virus, bacteria, or allergies",
+                prevention: "Not touching eyes, hand washing",
+                treatment: "Eye drops, warm compress"
+            }, {
+                name: "vertigo",
+                displayName: "Vertigo",
+                symptoms: "Spinning sensation, dizziness, nausea",
+                causes: "Inner ear problems, BPPV",
+                prevention: "Avoid sudden head movements",
+                treatment: "Epley maneuver, Vestibular therapy"
+            }, {
+                name: "scabies",
+                displayName: "Scabies",
+                symptoms: "Intense itching, pimple-like rash",
+                causes: "Infestation by tiny mites",
+                prevention: "Avoiding close skin contact",
+                treatment: "Permethrin cream, washing linens"
+            }, {
+                name: "ringworm",
+                displayName: "Ringworm (Fungal Infection)",
+                symptoms: "Circular red itchy rash",
+                causes: "Fungi (Dermatophytes)",
+                prevention: "Keeping skin dry, hygiene",
+                treatment: "Antifungal creams (Clotrimazole)"
+            }, {
+                name: "ulcer",
+                displayName: "Peptic Ulcer",
+                symptoms: "Burning stomach pain, bloating, nausea",
+                causes: "H. pylori bacteria, overuse of NSAIDs",
+                prevention: "Avoid spicy food, limit painkillers",
+                treatment: "Antibiotics, Proton pump inhibitors"
+            }, {
+                name: "appendicitis",
+                displayName: "Appendicitis",
+                symptoms: "Sudden pain in lower right abdomen, fever",
+                causes: "Blockage in the lining of the appendix",
+                prevention: "None specific (High fiber may help)",
+                treatment: "Surgery (Appendectomy)"
+            }, {
+                name: "stroke",
+                displayName: "Stroke",
+                symptoms: "Face drooping, arm weakness, speech difficulty",
+                causes: "Blood clot or burst vessel in brain",
+                prevention: "Manage BP, quit smoking, healthy diet",
+                treatment: "Emergency medical care, blood thinners"
+            }, {
+                name: "dengue",
+                displayName: "Dengue Fever",
+                symptoms: "High fever, severe headache, joint pain, rash",
+                causes: "Aedes mosquito bite carrying Dengue virus",
+                prevention: "Mosquito nets, repellents, clearing stagnant water",
+                treatment: "Hydration, Paracetamol, platelet monitoring"
+            }, {
+                name: "typhoid",
+                displayName: "Typhoid Fever",
+                symptoms: "High fever, stomach pain, headache, weakness",
+                causes: "Salmonella typhi (contaminated food/water)",
+                prevention: "Hygiene, clean water, vaccination",
+                treatment: "Antibiotics (Azithromycin, Ceftriaxone)"
+            }, {
+                name: "malaria",
+                displayName: "Malaria",
+                symptoms: "Chills, high fever, sweating, shivering",
+                causes: "Anopheles mosquito bite (Plasmodium parasite)",
+                prevention: "Mosquito nets, cleaning drains, repellents",
+                treatment: "Antimalarials (Chloroquine, ACT)"
+            }, {
+                name: "tuberculosis",
+                displayName: "Tuberculosis (TB)",
+                symptoms: "Persistent cough, weight loss, night sweats",
+                causes: "Mycobacterium tuberculosis bacteria",
+                prevention: "BCG vaccine, good ventilation, hygiene",
+                treatment: "DOTS therapy (Rifampicin, Isoniazid)"
+            }, {
+                name: "hepatitis_b",
+                displayName: "Hepatitis B",
+                symptoms: "Jaundice, fatigue, dark urine, liver pain",
+                causes: "Hepatitis B virus (blood/fluid contact)",
+                prevention: "Hepatitis B vaccination",
+                treatment: "Antiviral drugs, liver monitoring"
+            }, {
+                name: "covid_19",
+                displayName: "COVID-19",
+                symptoms: "Fever, cough, shortness of breath, loss of taste/smell",
+                causes: "SARS-CoV-2 virus",
+                prevention: "Masking, social distancing, vaccination",
+                treatment: "Supportive care, oxygen, antivirals"
+            }, {
+                name: "leprosy",
+                displayName: "Leprosy (Kushth Rog)",
+                symptoms: "Skin patches, numbness, muscle weakness",
+                causes: "Mycobacterium leprae bacteria",
+                prevention: "Early diagnosis, avoiding close contact",
+                treatment: "Multi-Drug Therapy (MDT)"
+            }, {
+                name: "scoliosis",
+                displayName: "Scoliosis",
+                symptoms: "Uneven shoulders, curved spine, back pain",
+                causes: "Growth spurt before puberty, genetics",
+                prevention: "Posture awareness",
+                treatment: "Braces, surgery"
+            }, {
+                name: "epilepsy",
+                displayName: "Epilepsy",
+                symptoms: "Seizures, loss of consciousness",
+                causes: "Brain injury, genetics, stroke",
+                prevention: "Prevent head injuries",
+                treatment: "Anti-epileptic drugs (AEDs)"
+            }, {
+                name: "psoriasis",
+                displayName: "Psoriasis",
+                symptoms: "Red patches, silvery scales, dry skin",
+                causes: "Immune system overactivity, genetics",
+                prevention: "Moisturize, avoid triggers",
+                treatment: "Topical steroids, UV therapy"
+            }, {
+                name: "osteoporosis",
+                displayName: "Osteoporosis",
+                symptoms: "Fractures, loss of height, stooped posture",
+                causes: "Bone density loss with age",
+                prevention: "Calcium, Vitamin D, exercise",
+                treatment: "Bisphosphonates, supplements"
+            }, {
+                name: "gout",
+                displayName: "Gout",
+                symptoms: "Sudden joint pain, usually big toe",
+                causes: "High uric acid levels",
+                prevention: "Avoid red meat, alcohol, hydrate",
+                treatment: "NSAIDs, uric acid lowering drugs"
+            }, {
+                name: "migraines",
+                displayName: "Migraine",
+                symptoms: "Severe headache, sensitivity to light and sound",
+                causes: "Stress, hormonal changes, certain foods",
+                prevention: "Sleep, stress management",
+                treatment: "Painkillers, Triptans"
+            }, {
+                name: "asthma",
+                displayName: "Bronchial Asthma",
+                symptoms: "Wheezing, breathlessness, chest tightness",
+                causes: "Allergens, pollution, genetics",
+                prevention: "Avoid triggers, inhalers",
+                treatment: "Inhalers, corticosteroids"
+            }, {
+                name: "chickenpox",
+                displayName: "Chickenpox",
+                symptoms: "Itchy blisters, fever, tiredness",
+                causes: "Varicella-zoster virus",
+                prevention: "Vaccine",
+                treatment: "Antivirals, soothing lotions"
+            }, {
+                name: "measles",
+                displayName: "Measles",
+                symptoms: "Rash, fever, cough, red eyes",
+                causes: "Measles virus",
+                prevention: "MMR vaccine",
+                treatment: "Vitamin A, fever reducers"
+            }, {
+                name: "mumps",
+                displayName: "Mumps",
+                symptoms: "Swollen jaw, fever, headache",
+                causes: "Mumps virus",
+                prevention: "MMR vaccine",
+                treatment: "Pain relief, cold packs"
+            }, {
+                name: "tetanus",
+                displayName: "Tetanus (Dhanustambha)",
+                symptoms: "Jaw cramps, muscle spasms",
+                causes: "Clostridium tetani bacteria",
+                prevention: "Tetanus vaccine, wound care",
+                treatment: "Antitoxin, antibiotics"
+            }, {
+                name: "meningitis",
+                displayName: "Meningitis",
+                symptoms: "Stiff neck, high fever, headache",
+                causes: "Viral or bacterial infection",
+                prevention: "Vaccination, hygiene",
+                treatment: "Antibiotics, antivirals"
+            }, {
+                name: "covid_19",
+                displayName: "COVID-19",
+                symptoms: "Fever, cough, breathing difficulty",
+                causes: "SARS-CoV-2 virus",
+                prevention: "Mask, vaccination",
+                treatment: "Supportive care, antivirals"
+            }, {
+                name: "hepatitis_c",
+                displayName: "Hepatitis C",
+                symptoms: "Fatigue, jaundice, abdominal pain",
+                causes: "Blood contact with infected fluids",
+                prevention: "Safe blood, needles",
+                treatment: "Antivirals"
+            }, {
+                name: "psoriasis",
+                displayName: "Psoriasis",
+                symptoms: "Red patches, silvery scales",
+                causes: "Immune system overactivity",
+                prevention: "Avoid triggers",
+                treatment: "Steroids, UV therapy"
+            }, {
+                name: "rheumatoid_arthritis",
+                displayName: "Rheumatoid Arthritis",
+                symptoms: "Joint pain, swelling, deformity",
+                causes: "Autoimmune attack on joints",
+                prevention: "Healthy lifestyle",
+                treatment: "DMARDs, steroids"
+            }, {
+                name: "uric_acid",
+                displayName: "Uric Acid Disorders",
+                symptoms: "Joint pain, kidney stones",
+                causes: "High uric acid",
+                prevention: "Diet control",
+                treatment: "Uric acid lowering medications"
+            }, {
+                name: "bladder_infection",
+                displayName: "Bladder Infection",
+                symptoms: "Burning, frequent urination",
+                causes: "Bacterial infection",
+                prevention: "Hydration, hygiene",
+                treatment: "Antibiotics"
+            }, {
+                name: "liver_cancer",
+                displayName: "Liver Cancer",
+                symptoms: "Weight loss, jaundice",
+                causes: "Hepatitis B/C, cirrhosis",
+                prevention: "Vaccination, healthy lifestyle",
+                treatment: "Surgery, chemo"
+            }, {
+                name: "kidney_disease",
+                displayName: "Chronic Kidney Disease",
+                symptoms: "Swelling, fatigue, urine changes",
+                causes: "Diabetes, hypertension",
+                prevention: "Control sugar, BP",
+                treatment: "Dialysis, transplant"
+            }, {
+                name: "sleep_apnea",
+                displayName: "Sleep Apnea",
+                symptoms: "Snoring, gasping during sleep",
+                causes: "Airway obstruction",
+                prevention: "Weight loss, sleep position",
+                treatment: "CPAP, surgery"
+            }, {
+                name: "vitiligo",
+                displayName: "Vitiligo",
+                symptoms: "White patches on skin",
+                causes: "Autoimmune destruction of pigment cells",
+                prevention: "Sun protection",
+                treatment: "Phototherapy"
+            }, {
+                name: "cataract",
+                displayName: "Cataract",
+                symptoms: "Blurred vision, glare",
+                causes: "Aging, UV exposure",
+                prevention: "UV protection, healthy diet",
+                treatment: "Surgery"
+            }, {
+                name: "glaucoma",
+                displayName: "Glaucoma",
+                symptoms: "Lost peripheral vision, eye pain",
+                causes: "High eye pressure",
+                prevention: "Regular eye exams",
+                treatment: "Eye drops, surgery"
+            }, {
+                name: "dental_caries",
+                displayName: "Dental Caries",
+                symptoms: "Toothache, sensitivity",
+                causes: "Bacterial plaque, sugar intake",
+                prevention: "Brushing, flossing",
+                treatment: "Fillings, root canal"
+            }, {
+                name: "osteomyelitis",
+                displayName: "Osteomyelitis",
+                symptoms: "Bone pain, fever",
+                causes: "Bacterial infection",
+                prevention: "Wound care",
+                treatment: "Antibiotics"
+            }, {
+                name: "adenoiditis",
+                displayName: "Adenoiditis",
+                symptoms: "Nasal congestion, sore throat, snoring",
+                causes: "Infection or inflammation of adenoids",
+                prevention: "Treat infections early",
+                treatment: "Antibiotics, surgery if chronic"
+            }, {
+                name: "appendicitis",
+                displayName: "Appendicitis",
+                symptoms: "Lower right abdominal pain, nausea",
+                causes: "Blockage in the appendix",
+                prevention: "High fiber diet",
+                treatment: "Surgery (appendectomy)"
+            }, {
+                name: "asthma_attack",
+                displayName: "Asthma Attack",
+                symptoms: "Severe shortness of breath, wheezing",
+                causes: "Trigger exposure (allergens, cold air)",
+                prevention: "Avoid triggers, inhalers",
+                treatment: "Inhaler, emergency medical care"
+            }, {
+                name: "bronchiectasis",
+                displayName: "Bronchiectasis",
+                symptoms: "Chronic cough, mucus production",
+                causes: "Infections, genetic conditions",
+                prevention: "Treat infections early",
+                treatment: "Physiotherapy, antibiotics"
+            }, {
+                name: "carpal_tunnel_syndrome",
+                displayName: "Carpal Tunnel Syndrome",
+                symptoms: "Numbness, tingling in hand",
+                causes: "Pressure on median nerve",
+                prevention: "Ergonomic habits",
+                treatment: "Splints, surgery"
+            }, {
+                name: "celiac_disease",
+                displayName: "Celiac Disease",
+                symptoms: "Diarrhea, weight loss, anemia",
+                causes: "Gluten intolerance",
+                prevention: "Gluten-free diet",
+                treatment: "Gluten avoidance"
+            }, {
+                name: "cholelithiasis",
+                displayName: "Gallstones",
+                symptoms: "Severe pain in upper right abdomen",
+                causes: "High cholesterol, obesity",
+                prevention: "Healthy diet",
+                treatment: "Surgical removal"
+            }, {
+                name: "chronic_kidney_disease",
+                displayName: "Chronic Kidney Disease",
+                symptoms: "Fatigue, swelling, urine changes",
+                causes: "Diabetes, hypertension",
+                prevention: "Control blood sugar and BP",
+                treatment: "Dialysis, transplant"
+            }, {
+                name: "congestive_heart_failure",
+                displayName: "Congestive Heart Failure",
+                symptoms: "Shortness of breath, swelling",
+                causes: "Heart muscle weakness",
+                prevention: "Healthy lifestyle, meds",
+                treatment: "Medications, surgery"
+            }, {
+                name: "coronary_artery_disease",
+                displayName: "Coronary Artery Disease",
+                symptoms: "Chest pain, heart attack",
+                causes: "Atherosclerosis",
+                prevention: "Healthy diet, exercise",
+                treatment: "Medications, angioplasty"
+            }, {
+                name: "cystic_fibrosis",
+                displayName: "Cystic Fibrosis",
+                symptoms: "Lung infections, salty skin",
+                causes: "Genetic mutation",
+                prevention: "Genetic counseling",
+                treatment: "Physiotherapy, antibiotics"
+            }, {
+                name: "deep_vein_thrombosis",
+                displayName: "Deep Vein Thrombosis",
+                symptoms: "Swelling, pain in leg",
+                causes: "Blood clot in deep vein",
+                prevention: "Exercise, hydration",
+                treatment: "Blood thinners"
+            }, {
+                name: "diabetic_neuropathy",
+                displayName: "Diabetic Neuropathy",
+                symptoms: "Numbness, tingling, pain",
+                causes: "High blood sugar damage",
+                prevention: "Blood sugar control",
+                treatment: "Medications for nerve pain"
+            }, {
+                name: "diverticulitis",
+                displayName: "Diverticulitis",
+                symptoms: "Lower abdominal pain, fever",
+                causes: "Inflammation of diverticula",
+                prevention: "High fiber diet",
+                treatment: "Antibiotics, surgery"
+            }, {
+                name: "encephalopathy",
+                displayName: "Encephalopathy",
+                symptoms: "Confusion, drowsiness",
+                causes: "Liver failure, infections",
+                prevention: "Treat underlying causes",
+                treatment: "Supportive care"
+            }, {
+                name: "erythema_nodosum",
+                displayName: "Erythema Nodosum",
+                symptoms: "Tender red nodules on skin",
+                causes: "Infections, medications",
+                prevention: "Treat causes",
+                treatment: "NSAIDs, corticosteroids"
+            }, {
+                name: "fibromyalgia",
+                displayName: "Fibromyalgia",
+                symptoms: "Widespread pain, fatigue",
+                causes: "Nerve pain processing issues",
+                prevention: "Stress reduction",
+                treatment: "Pain relievers, antidepressants"
+            }, {
+                name: "gastric_ulcer",
+                displayName: "Gastric Ulcer",
+                symptoms: "Burning stomach pain",
+                causes: "H. pylori, NSAIDs",
+                prevention: "Avoid irritants",
+                treatment: "Antibiotics, PPIs"
+            }, {
+                name: "hemorrhoids",
+                displayName: "Hemorrhoids",
+                symptoms: "Bleeding, itching",
+                causes: "Straining, constipation",
+                prevention: "High fiber diet",
+                treatment: "Creams, surgery"
+            }, {
+                name: "herpes_zoster",
+                displayName: "Herpes Zoster (Shingles)",
+                symptoms: "Painful rash",
+                causes: "Reactivation of chickenpox virus",
+                prevention: "Vaccine",
+                treatment: "Antivirals"
+            }, {
+                name: "hypertension",
+                displayName: "Hypertension (High BP)",
+                symptoms: "Often asymptomatic",
+                causes: "Stress, diet, genetics",
+                prevention: "Low salt, exercise",
+                treatment: "Medications"
+            }, {
+                name: "hyperthyroidism",
+                displayName: "Hyperthyroidism",
+                symptoms: "Weight loss, sweating",
+                causes: "Overactive thyroid",
+                prevention: "None",
+                treatment: "Anti-thyroid meds"
+            }, {
+                name: "hypothyroidism",
+                displayName: "Hypothyroidism",
+                symptoms: "Weight gain, fatigue",
+                causes: "Autoimmune, iodine deficiency",
+                prevention: "Iodine intake",
+                treatment: "Levothyroxine"
+            }, {
+                name: "impetigo",
+                displayName: "Impetigo",
+                symptoms: "Red sores",
+                causes: "Bacterial infection",
+                prevention: "Hygiene",
+                treatment: "Antibiotics"
+            }, {
+                name: "lupus",
+                displayName: "Lupus (SLE)",
+                symptoms: "Joint pain, rash",
+                causes: "Autoimmune",
+                prevention: "Sun protection",
+                treatment: "Immunosuppressants"
+            }, {
+                name: "meningitis",
+                displayName: "Meningitis",
+                symptoms: "Neck stiffness, fever",
+                causes: "Viral or bacterial",
+                prevention: "Vaccines",
+                treatment: "Antibiotics, antivirals"
+            }, {
+                name: "obesity",
+                displayName: "Obesity",
+                symptoms: "Excess body fat",
+                causes: "Diet, inactivity",
+                prevention: "Healthy diet, exercise",
+                treatment: "Lifestyle change"
+            }, {
+                name: "parkinson",
+                displayName: "Parkinson's Disease",
+                symptoms: "Tremors, rigidity",
+                causes: "Loss of dopamine neurons",
+                prevention: "Healthy lifestyle",
+                treatment: "Medication"
+            }, {
+                name: "pericarditis",
+                displayName: "Pericarditis",
+                symptoms: "Chest pain",
+                causes: "Viral infection",
+                prevention: "Treat infections",
+                treatment: "Anti-inflammatory drugs"
+            }, {
+                name: "pneumothorax",
+                displayName: "Pneumothorax (Collapsed lung)",
+                symptoms: "Sudden chest pain, shortness of breath",
+                causes: "Lung injury",
+                prevention: "Avoid lung injury",
+                treatment: "Needle decompression"
+            }, {
+                name: "psoriasis",
+                displayName: "Psoriasis",
+                symptoms: "Scaly patches",
+                causes: "Autoimmune",
+                prevention: "Avoid triggers",
+                treatment: "Steroids, UV therapy"
+            }, {
+                name: "rheumatoid_arthritis",
+                displayName: "Rheumatoid Arthritis",
+                symptoms: "Joint swelling, pain",
+                causes: "Autoimmune",
+                prevention: "Healthy lifestyle",
+                treatment: "DMARDs"
+            }, {
+                name: "schizophrenia",
+                displayName: "Schizophrenia",
+                symptoms: "Hallucinations, delusions",
+                causes: "Genetics, brain chemistry",
+                prevention: "Early intervention",
+                treatment: "Antipsychotics"
+            }, {
+                name: "sickle_cell",
+                displayName: "Sickle Cell Anemia",
+                symptoms: "Crises, fatigue",
+                causes: "Genetic hemoglobin disorder",
+                prevention: "Genetic testing",
+                treatment: "Blood transfusions"
+            }, {
+                name: "sinusitis",
+                displayName: "Sinusitis",
+                symptoms: "Facial pain",
+                causes: "Infection or allergies",
+                prevention: "Avoid allergens",
+                treatment: "Decongestants"
+            }, {
+                name: "stomach_cancer",
+                displayName: "Stomach Cancer",
+                symptoms: "Indigestion, weight loss",
+                causes: "H. pylori, diet",
+                prevention: "Healthy diet",
+                treatment: "Surgery"
+            }, {
+                name: "thrombosis",
+                displayName: "Thrombosis",
+                symptoms: "Swelling, pain",
+                causes: "Blood clot",
+                prevention: "Exercise",
+                treatment: "Blood thinners"
+            }, {
+                name: "tuberculosis",
+                displayName: "Tuberculosis",
+                symptoms: "Persistent cough",
+                causes: "Mycobacterium tuberculosis",
+                prevention: "Vaccination",
+                treatment: "Long-term antibiotics"
+            }, {
+                name: "ulcerative_colitis",
+                displayName: "Ulcerative Colitis",
+                symptoms: "Blood in stool",
+                causes: "Immune response",
+                prevention: "Manage stress",
+                treatment: "Anti-inflammatory drugs"
+            }, {
+                name: "varicose_veins",
+                displayName: "Varicose Veins",
+                symptoms: "Aching, visible veins",
+                causes: "Weak vein valves",
+                prevention: "Exercise",
+                treatment: "Sclerotherapy"
+            }, {
+                name: "vitamin_b12_deficiency",
+                displayName: "Vitamin B12 Deficiency",
+                symptoms: "Tingling, fatigue",
+                causes: "Diet deficient",
+                prevention: "Eat B12-rich foods",
+                treatment: "B12 injections"
+            }, {
+                name: "whooping_cough",
+                displayName: "Whooping Cough",
+                symptoms: "Severe coughing fits",
+                causes: "Bordetella pertussis",
+                prevention: "DTP vaccine",
+                treatment: "Antibiotics"
+            }, {
+                name: "zika",
+                displayName: "Zika Virus",
+                symptoms: "Fever, rash",
+                causes: "Aedes mosquito",
+                prevention: "Mosquito control",
+                treatment: "Supportive care"
+            }, {
+                name: "achalasia",
+                displayName: "Achalasia",
+                symptoms: "Difficulty swallowing, regurgitation",
+                causes: "Nerve damage in esophagus",
+                prevention: "Early diagnosis",
+                treatment: "Balloon dilation, surgery"
+            }, {
+                name: "amyloidosis",
+                displayName: "Amyloidosis",
+                symptoms: "Fatigue, swelling, shortness of breath",
+                causes: "Protein deposits in organs",
+                prevention: "No known prevention",
+                treatment: "Chemotherapy, organ transplant"
+            }, {
+                name: "balanitis",
+                displayName: "Balanitis",
+                symptoms: "Redness, swelling, itching of foreskin",
+                causes: "Infection, poor hygiene",
+                prevention: "Good hygiene",
+                treatment: "Antifungal/antibiotic creams"
+            }, {
+                name: "bursitis",
+                displayName: "Bursitis",
+                symptoms: "Joint pain, swelling",
+                causes: "Repetitive movement, injury",
+                prevention: "Rest, proper technique",
+                treatment: "NSAIDs, injections"
+            }, {
+                name: "celiac_disease",
+                displayName: "Celiac Disease",
+                symptoms: "Digestive discomfort, anemia",
+                causes: "Gluten intolerance",
+                prevention: "Gluten-free diet",
+                treatment: "Diet management"
+            }, {
+                name: "conjunctivitis",
+                displayName: "Conjunctivitis (Pink Eye)",
+                symptoms: "Red, itchy eyes, discharge",
+                causes: "Infections, allergies",
+                prevention: "Hygiene",
+                treatment: "Antibiotics, antihistamines"
+            }, {
+                name: "crones_disease",
+                displayName: "Crohn's Disease",
+                symptoms: "Diarrhea, abdominal pain",
+                causes: "Autoimmune inflammation",
+                prevention: "No known prevention",
+                treatment: "Anti-inflammatory drugs, surgery"
+            }, {
+                name: "diphtheria",
+                displayName: "Diphtheria",
+                symptoms: "Sore throat, fever, weakness",
+                causes: "Bacterial infection",
+                prevention: "DTP vaccine",
+                treatment: "Antitoxin, antibiotics"
+            }, {
+                name: "eczema",
+                displayName: "Eczema (Dermatitis)",
+                symptoms: "Itchy, inflamed skin",
+                causes: "Allergic reactions, irritants",
+                prevention: "Avoid triggers",
+                treatment: "Moisturizers, steroids"
+            }, {
+                name: "fibroid",
+                displayName: "Uterine Fibroids",
+                symptoms: "Heavy menstrual bleeding, pelvic pain",
+                causes: "Hormonal imbalance",
+                prevention: "Hormonal regulation",
+                treatment: "Medication, surgery"
+            }, {
+                name: "gangrene",
+                displayName: "Gangrene",
+                symptoms: "Darkened, dead tissue",
+                causes: "Infection, poor blood flow",
+                prevention: "Proper wound care",
+                treatment: "Surgical removal, antibiotics"
+            }, {
+                name: "giardiasis",
+                displayName: "Giardiasis",
+                symptoms: "Diarrhea, cramps",
+                causes: "Protozoan parasite in water",
+                prevention: "Drink clean water",
+                treatment: "Antiprotozoal medications"
+            }, {
+                name: "gynecomastia",
+                displayName: "Gynecomastia",
+                symptoms: "Enlarged breast tissue in males",
+                causes: "Hormonal imbalance",
+                prevention: "Address underlying causes",
+                treatment: "Medication, surgery"
+            }, {
+                name: "hemophilia",
+                displayName: "Hemophilia",
+                symptoms: "Excess bleeding, bruising",
+                causes: "Blood clotting disorder",
+                prevention: "Genetic counseling",
+                treatment: "Factor replacement therapy"
+            }, {
+                name: "hernias",
+                displayName: "Hernia",
+                symptoms: "Bulge, pain at hernia site",
+                causes: "Muscle weakness, strain",
+                prevention: "Proper lifting techniques",
+                treatment: "Surgery"
+            }, {
+                name: "hyperparathyroidism",
+                displayName: "Hyperparathyroidism",
+                symptoms: "Bone pain, fatigue",
+                causes: "Overactive parathyroid glands",
+                prevention: "No specific prevention",
+                treatment: "Surgery, medication"
+            }, {
+                name: "hypoparathyroidism",
+                displayName: "Hypoparathyroidism",
+                symptoms: "Muscle cramps, tingling",
+                causes: "Parathyroid gland damage",
+                prevention: "Address underlying causes",
+                treatment: "Calcium, vitamin D supplements"
+            }, {
+                name: "idiopathic_pulmonary_fibrosis",
+                displayName: "Idiopathic Pulmonary Fibrosis",
+                symptoms: "Shortness of breath, dry cough",
+                causes: "Lung tissue scarring",
+                prevention: "Avoid lung irritants",
+                treatment: "Antifibrotic drugs, oxygen therapy"
+            }, {
+                name: "kawasaki_disease",
+                displayName: "Kawasaki Disease",
+                symptoms: "Fever, rash, swollen glands",
+                causes: "Unknown, possibly infection",
+                prevention: "No specific prevention",
+                treatment: "IVIG, aspirin"
+            }, {
+                name: "liver_cirrhosis",
+                displayName: "Liver Cirrhosis",
+                symptoms: "Jaundice, fatigue",
+                causes: "Chronic liver damage",
+                prevention: "Limit alcohol, hepatitis control",
+                treatment: "Supportive care, transplant"
+            }, {
+                name: "lyme_disease",
+                displayName: "Lyme Disease",
+                symptoms: "Fever, rash, joint pain",
+                causes: "Tick bite",
+                prevention: "Avoid tick habitats",
+                treatment: "Antibiotics"
+            }, {
+                name: "menopause",
+                displayName: "Menopause",
+                symptoms: "Hot flashes, mood changes",
+                causes: "End of ovarian function",
+                prevention: "Hormone therapy (if needed)",
+                treatment: "Lifestyle changes, medications"
+            }, {
+                name: "migraine_with_aura",
+                displayName: "Migraine with Aura",
+                symptoms: "Visual disturbances, headache",
+                causes: "Nerve activity changes",
+                prevention: "Stress management",
+                treatment: "Pain relievers, anti-migraine drugs"
+            }, {
+                name: "nephrotic_syndrome",
+                displayName: "Nephrotic Syndrome",
+                symptoms: "Swelling, protein in urine",
+                causes: "Kidney damage",
+                prevention: "Manage underlying disease",
+                treatment: "Steroids, diuretics"
+            }, {
+                name: "osteomyelitis",
+                displayName: "Osteomyelitis",
+                symptoms: "Bone pain, fever",
+                causes: "Bacterial infection",
+                prevention: "Proper wound care",
+                treatment: "Antibiotics, surgery"
+            }, {
+                name: "paratyphoid",
+                displayName: "Paratyphoid Fever",
+                symptoms: "Fever, abdominal pain",
+                causes: "Salmonella bacteria",
+                prevention: "Hygiene, safe food/water",
+                treatment: "Antibiotics"
+            }, {
+                name: "peritonitis",
+                displayName: "Peritonitis",
+                symptoms: "Severe abdominal pain",
+                causes: "Infection or rupture",
+                prevention: "Prompt treatment of infections",
+                treatment: "Antibiotics, surgery"
+            }, {
+                name: "polycystic_ovary_syndrome",
+                displayName: "Polycystic Ovary Syndrome (PCOS)",
+                symptoms: "Irregular periods, excess hair",
+                causes: "Hormonal imbalance",
+                prevention: "Healthy lifestyle",
+                treatment: "Medications, lifestyle changes"
+            }, {
+                name: "pseudotumor_cerebri",
+                displayName: "Pseudotumor Cerebri",
+                symptoms: "Headache, vision problems",
+                causes: "Increased intracranial pressure",
+                prevention: "Weight management",
+                treatment: "Medications, surgery"
+            }, {
+                name: "rickets",
+                displayName: "Rickets",
+                symptoms: "Bone deformities, delayed growth",
+                causes: "Vitamin D deficiency",
+                prevention: "Adequate sunlight, diet",
+                treatment: "Vitamin D, calcium supplements"
+            }, {
+                name: "sclerosis",
+                displayName: "Multiple Sclerosis",
+                symptoms: "Muscle weakness, vision loss",
+                causes: "Autoimmune attack on nerves",
+                prevention: "No known prevention",
+                treatment: "Disease-modifying therapies"
+            }, {
+                name: "steatosis",
+                displayName: "Fatty Liver Disease",
+                symptoms: "Often asymptomatic",
+                causes: "Obesity, alcohol",
+                prevention: "Healthy diet, exercise",
+                treatment: "Lifestyle modifications"
+            }, {
+                name: "thyroid_nodule",
+                displayName: "Thyroid Nodule",
+                symptoms: "Neck swelling",
+                causes: "Benign or malignant growths",
+                prevention: "Regular check-ups",
+                treatment: "Monitoring, surgery if needed"
+            }, {
+                name: "toxoplasmosis",
+                displayName: "Toxoplasmosis",
+                symptoms: "Flu-like symptoms, eye problems",
+                causes: "Toxoplasma gondii parasite",
+                prevention: "Cook meat properly, avoid cat feces",
+                treatment: "Antiparasitic drugs"
+            }, {
+                name: "ankylosing_spondylitis",
+                displayName: "Ankylosing Spondylitis",
+                symptoms: "Back pain, stiffness",
+                causes: "Autoimmune inflammation of the spine",
+                prevention: "No known prevention",
+                treatment: "NSAIDs, physical therapy"
+            }, {
+                name: "biting_infection",
+                displayName: "Biting Infection",
+                symptoms: "Redness, swelling, pain",
+                causes: "Bacterial entry through bites",
+                prevention: "Avoid bites, hygiene",
+                treatment: "Antibiotics"
+            }, {
+                name: "carcinoma_bladder",
+                displayName: "Bladder Carcinoma",
+                symptoms: "Blood in urine, pain",
+                causes: "Smoking, chemical exposure",
+                prevention: "Avoid carcinogens",
+                treatment: "Surgery, chemotherapy"
+            }, {
+                name: "cervical_dysplasia",
+                displayName: "Cervical Dysplasia",
+                symptoms: "Often asymptomatic",
+                causes: "HPV infection",
+                prevention: "HPV vaccine, screening",
+                treatment: "Cryotherapy, laser therapy"
+            }, {
+                name: "chronic_mono",
+                displayName: "Chronic Mononucleosis",
+                symptoms: "Fatigue, sore throat",
+                causes: "Epstein-Barr virus",
+                prevention: "Avoid close contact with infected",
+                treatment: "Rest, supportive care"
+            }, {
+                name: "dermatomyositis",
+                displayName: "Dermatomyositis",
+                symptoms: "Muscle weakness, skin rashes",
+                causes: "Autoimmune disorder",
+                prevention: "No known prevention",
+                treatment: "Immunosuppressants"
+            }, {
+                name: "dysphagia",
+                displayName: "Dysphagia",
+                symptoms: "Difficulty swallowing",
+                causes: "Neurological or structural issues",
+                prevention: "Treat underlying causes",
+                treatment: "Therapy, surgery"
+            }, {
+                name: "encephalitis",
+                displayName: "Encephalitis",
+                symptoms: "Headache, fever, confusion",
+                causes: "Viral infection",
+                prevention: "Vaccination, mosquito control",
+                treatment: "Antivirals, supportive care"
+            }, {
+                name: "eyelid_malignancy",
+                displayName: "Eyelid Malignancy",
+                symptoms: "Persistent eyelid lesion",
+                causes: "Sun exposure, mutations",
+                prevention: "Sun protection",
+                treatment: "Surgical excision"
+            }, {
+                name: "fibromyalgia",
+                displayName: "Fibromyalgia",
+                symptoms: "Chronic widespread pain",
+                causes: "Nerve pain processing issues",
+                prevention: "Stress management",
+                treatment: "Medications, therapy"
+            }, {
+                name: "gonorrhea",
+                displayName: "Gonorrhea",
+                symptoms: "Painful urination, discharge",
+                causes: "Bacterial infection",
+                prevention: "Safe sex practices",
+                treatment: "Antibiotics"
+            }, {
+                name: "granulomatosis",
+                displayName: "Granulomatosis with Polyangiitis",
+                symptoms: "Nasal, lung, kidney issues",
+                causes: "Autoimmune vasculitis",
+                prevention: "No known prevention",
+                treatment: "Steroids, immunosuppressants"
+            }, {
+                name: "hemorrhagic_fevers",
+                displayName: "Hemorrhagic Fever",
+                symptoms: "Fever, bleeding, organ failure",
+                causes: "Viral infections",
+                prevention: "Vector control, vaccines",
+                treatment: "Supportive care"
+            }, {
+                name: "hyperhidrosis",
+                displayName: "Hyperhidrosis",
+                symptoms: "Excessive sweating",
+                causes: "Overactive sweat glands",
+                prevention: "None specific",
+                treatment: "Antiperspirants, surgery"
+            }, {
+                name: "idiopathic_thrombocytopenic_purpura",
+                displayName: "Idiopathic Thrombocytopenic Purpura",
+                symptoms: "Easy bruising, bleeding",
+                causes: "Autoimmune destruction of platelets",
+                prevention: "No known prevention",
+                treatment: "Steroids, IVIG"
+            }, {
+                name: "interstitial_lung_disease",
+                displayName: "Interstitial Lung Disease",
+                symptoms: "Shortness of breath, dry cough",
+                causes: "Infections, autoimmune",
+                prevention: "Avoid lung irritants",
+                treatment: "Steroids, oxygen therapy"
+            }, {
+                name: "lateral_sclerosis",
+                displayName: "Lou Gehrig's Disease (ALS)",
+                symptoms: "Muscle weakness, paralysis",
+                causes: "Degeneration of nerve cells",
+                prevention: "No known prevention",
+                treatment: "Supportive care"
+            }, {
+                name: "malaria",
+                displayName: "Malaria",
+                symptoms: "Fever, chills, sweating",
+                causes: "Mosquito-borne Plasmodium parasite",
+                prevention: "Mosquito nets, insect repellents",
+                treatment: "Antimalarial drugs"
+            }, {
+                name: "melanoma",
+                displayName: "Melanoma (Skin Cancer)",
+                symptoms: "Changing moles, new skin lesions",
+                causes: "UV exposure, genetics",
+                prevention: "Sun protection",
+                treatment: "Surgery, immunotherapy"
+            }, {
+                name: "mumps",
+                displayName: "Mumps",
+                symptoms: "Swollen salivary glands",
+                causes: "Viral infection",
+                prevention: "MMR vaccine",
+                treatment: "Supportive care"
+            }, {
+                name: "myasthenia_gravis",
+                displayName: "Myasthenia Gravis",
+                symptoms: "Muscle weakness, drooping eyelids",
+                causes: "Autoimmune attack on neuromuscular junction",
+                prevention: "No known prevention",
+                treatment: "Immunosuppressants, plasmapheresis"
+            }, {
+                name: "nephritis",
+                displayName: "Nephritis",
+                symptoms: "Blood in urine, swelling",
+                causes: "Autoimmune or infection",
+                prevention: "Manage underlying diseases",
+                treatment: "Steroids, immunosuppressants"
+            }, {
+                name: "parkinsonism",
+                displayName: "Parkinsonism",
+                symptoms: "Tremors, rigidity, slow movement",
+                causes: "Brain dopamine deficiency",
+                prevention: "Healthy lifestyle",
+                treatment: "Medications, physiotherapy"
+            }, {
+                name: "pleurisy",
+                displayName: "Pleurisy",
+                symptoms: "Sharp chest pain, shortness of breath",
+                causes: "Infection, autoimmune",
+                prevention: "Treat underlying causes",
+                treatment: "NSAIDs, antibiotics"
+            }, {
+                name: "pneumonia",
+                displayName: "Pneumonia",
+                symptoms: "Cough, fever, difficulty breathing",
+                causes: "Bacterial, viral, fungal",
+                prevention: "Vaccination, hygiene",
+                treatment: "Antibiotics, antivirals"
+            }, {
+                name: "psittacosis",
+                displayName: "Psittacosis (Parrot Fever)",
+                symptoms: "Fever, cough, chills",
+                causes: "Bacterial infection from birds",
+                prevention: "Avoid contact with infected birds",
+                treatment: "Antibiotics"
+            }, {
+                name: "rickets",
+                displayName: "Rickets",
+                symptoms: "Bone deformities, delayed growth",
+                causes: "Vitamin D deficiency",
+                prevention: "Adequate sunlight, diet",
+                treatment: "Vitamin D, calcium"
+            }, {
+                name: "scabies",
+                displayName: "Scabies",
+                symptoms: "Itchy rash, burrows",
+                causes: "Mite infestation",
+                prevention: "Hygiene, treat contacts",
+                treatment: "Topical scabicides"
+            }, {
+                name: "scleroderma",
+                displayName: "Scleroderma",
+                symptoms: "Hardening of skin, organ damage",
+                causes: "Autoimmune disorder",
+                prevention: "No known prevention",
+                treatment: "Immunosuppressants"
+            }, {
+                name: "sinus_thrombosis",
+                displayName: "Cerebral Sinus Thrombosis",
+                symptoms: "Headache, seizures",
+                causes: "Blood clot in brain sinuses",
+                prevention: "Treat clot risk factors",
+                treatment: "Anticoagulants"
+            }, {
+                name: "strep_throat",
+                displayName: "Strep Throat",
+                symptoms: "Sore throat, fever",
+                causes: "Bacterial infection",
+                prevention: "Hygiene, avoid contact",
+                treatment: "Antibiotics"
+            }, {
+                name: "tetanus",
+                displayName: "Tetanus",
+                symptoms: "Muscle stiffness, spasms",
+                causes: "Clostridium tetani bacteria",
+                prevention: "Vaccination",
+                treatment: "Antitoxin, antibiotics"
+            }, {
+                name: "typhoid",
+                displayName: "Typhoid Fever",
+                symptoms: "Fever, weakness, abdominal pain",
+                causes: "Salmonella typhi bacteria",
+                prevention: "Safe food and water",
+                treatment: "Antibiotics"
+            }, {
+                name: "ulcerative_proctitis",
+                displayName: "Ulcerative Proctitis",
+                symptoms: "Rectal bleeding, pain",
+                causes: "Inflammation of rectum",
+                prevention: "Manage underlying disease",
+                treatment: "Anti-inflammatory meds"
+            }, {
+                name: "varicella",
+                displayName: "Chickenpox (Varicella)",
+                symptoms: "Itchy rash, fever",
+                causes: "Viral infection",
+                prevention: "Vaccine",
+                treatment: "Supportive care"
+            }
+              ];
+        const commonMedicines = [
+           {
+                name: "paracetamol",
+                displayName: "Paracetamol (Calpol/Dolo)",
+                uses: "Fever, mild to moderate pain",
+                dosage: "500-1000 mg every 4-6 hours, max 4000 mg/day",
+                sideEffects: "Rare; liver damage with overdose",
+                priceRange: "₹10 - ₹30 for 10-15 tablets"
+            }, {
+                name: "ibuprofen",
+                displayName: "Ibuprofen (Brufen)",
+                uses: "Inflammation, dental pain, body ache",
+                dosage: "200-400 mg every 4-6 hours",
+                sideEffects: "Stomach upset, acidity",
+                priceRange: "₹15 - ₹40 for 15 tablets"
+            }, {
+                name: "aceclofenac",
+                displayName: "Aceclofenac (Zerodol)",
+                uses: "Joint pain, rheumatoid arthritis",
+                dosage: "100 mg twice daily after food",
+                sideEffects: "Dizziness, nausea",
+                priceRange: "₹40 - ₹80 for 10 tablets"
+            }, {
+                name: "diclofenac",
+                displayName: "Diclofenac (Voveran)",
+                uses: "Severe pain and swelling",
+                dosage: "50 mg twice daily",
+                sideEffects: "Stomach pain, gas",
+                priceRange: "₹30 - ₹70 for 10 tablets"
+            }, {
+                name: "cetirizine",
+                displayName: "Cetirizine (Cetzine)",
+                uses: "Allergy, runny nose, sneezing",
+                dosage: "5-10 mg once daily (night)",
+                sideEffects: "Drowsiness, dry mouth",
+                priceRange: "₹18 - ₹35 for 10 tablets"
+            }, {
+                name: "pantoprazole",
+                displayName: "Pantoprazole (Pan-40)",
+                uses: "Acidity, heartburn, gastric ulcer",
+                dosage: "40 mg once daily, empty stomach",
+                sideEffects: "Headache, diarrhea",
+                priceRange: "₹80 - ₹150 for 10 tablets"
+            }, {
+                name: "amoxicillin_clav",
+                displayName: "Amoxicillin + Clavulanic Acid (Augmentin)",
+                uses: "Bacterial infections (Throat, Lungs)",
+                dosage: "625 mg twice daily for 5 days",
+                sideEffects: "Loose motions, nausea",
+                priceRange: "₹120 - ₹220 for 10 tablets"
+            }, {
+                name: "azithromycin",
+                displayName: "Azithromycin (Azithral)",
+                uses: "Typhoid, throat infection, pneumonia",
+                dosage: "500 mg once daily for 3-5 days",
+                sideEffects: "Stomach pain, dizziness",
+                priceRange: "₹70 - ₹130 for 3-5 tablets"
+            }, {
+                name: "metformin",
+                displayName: "Metformin (Glycomet)",
+                uses: "Type 2 Diabetes",
+                dosage: "500 mg once or twice daily with meals",
+                sideEffects: "Nausea, metallic taste",
+                priceRange: "₹20 - ₹50 for 10 tablets"
+            }, {
+                name: "telmisartan",
+                displayName: "Telmisartan (Telma)",
+                uses: "High blood pressure",
+                dosage: "40 mg once daily",
+                sideEffects: "Dizziness, back pain",
+                priceRange: "₹50 - ₹110 for 10 tablets"
+            }, {
+                name: "amlodipine",
+                displayName: "Amlodipine (Amlong)",
+                uses: "High blood pressure (Hypertension)",
+                dosage: "5 mg once daily",
+                sideEffects: "Ankle swelling",
+                priceRange: "₹10 - ₹30 for 10 tablets"
+            }, {
+                name: "atorvastatin",
+                displayName: "Atorvastatin (Atorva)",
+                uses: "High cholesterol",
+                dosage: "10-20 mg once daily at night",
+                sideEffects: "Muscle pain",
+                priceRange: "₹60 - ₹150 for 10 tablets"
+            }, {
+                name: "omeprazole",
+                displayName: "Omeprazole (Omez)",
+                uses: "Acid reflux, stomach ulcers",
+                dosage: "20 mg once daily before breakfast",
+                sideEffects: "Abdominal pain",
+                priceRange: "₹40 - ₹60 for 15 capsules"
+            }, {
+                name: "ranitidine",
+                displayName: "Ranitidine (Rantac)",
+                uses: "Stomach acid, indigestion",
+                dosage: "150 mg twice daily before food",
+                sideEffects: "Headache",
+                priceRange: "₹5 - ₹20 for 30 tablets"
+            }, {
+                name: "domperidone",
+                displayName: "Domperidone (Domstal)",
+                uses: "Nausea, vomiting, bloating",
+                dosage: "10 mg thrice daily before meals",
+                sideEffects: "Dry mouth",
+                priceRange: "₹25 - ₹45 for 10 tablets"
+            }, {
+                name: "ondansetron",
+                displayName: "Ondansetron (Emset)",
+                uses: "Vomiting control",
+                dosage: "4-8 mg as needed",
+                sideEffects: "Constipation, headache",
+                priceRange: "₹35 - ₹60 for 10 tablets"
+            }, {
+                name: "mefenamic_acid",
+                displayName: "Mefenamic Acid (Meftal Spas)",
+                uses: "Period pain, muscle cramps",
+                dosage: "250-500 mg thrice daily",
+                sideEffects: "Dizziness",
+                priceRange: "₹30 - ₹50 for 10 tablets"
+            }, {
+                name: "loperamide",
+                displayName: "Loperamide (Imodium)",
+                uses: "Diarrhea (Loose motions)",
+                dosage: "2 mg after each loose stool",
+                sideEffects: "Constipation",
+                priceRange: "₹20 - ₹40 for 10 tablets"
+            }, {
+                name: "cefixime",
+                displayName: "Cefixime (Taxim-O)",
+                uses: "Typhoid, UTI, ear infection",
+                dosage: "200 mg twice daily",
+                sideEffects: "Stomach upset",
+                priceRange: "₹70 - ₹120 for 10 tablets"
+            }, {
+                name: "montelukast",
+                displayName: "Montelukast (Montair)",
+                uses: "Asthma, seasonal allergies",
+                dosage: "10 mg once daily at night",
+                sideEffects: "Headache",
+                priceRange: "₹100 - ₹180 for 10 tablets"
+            }, {
+                name: "fexofenadine",
+                displayName: "Fexofenadine (Allegra)",
+                uses: "Severe skin allergy, hay fever",
+                dosage: "120-180 mg once daily",
+                sideEffects: "Dizziness, sleepiness (low)",
+                priceRange: "₹120 - ₹200 for 10 tablets"
+            }, {
+                name: "vitamin_d3",
+                displayName: "Vitamin D3 (Calcirol)",
+                uses: "Bone health, deficiency",
+                dosage: "60k IU once a week",
+                sideEffects: "Nausea (if overdose)",
+                priceRange: "₹25 - ₹50 per sachet"
+            }, {
+                name: "b_complex",
+                displayName: "B-Complex (Becosules)",
+                uses: "Mouth ulcers, energy",
+                dosage: "1 capsule daily",
+                sideEffects: "Yellow urine (normal)",
+                priceRange: "₹30 - ₹50 for 20 capsules"
+            }, {
+                name: "albendazole",
+                displayName: "Albendazole (Zentel)",
+                uses: "Deworming (stomach worms)",
+                dosage: "400 mg single dose",
+                sideEffects: "Nausea",
+                priceRange: "₹15 - ₹25 per tablet"
+            }, {
+                name: "fluconazole",
+                displayName: "Fluconazole (Forcan)",
+                uses: "Fungal infections",
+                dosage: "150 mg once a week",
+                sideEffects: "Nausea",
+                priceRange: "₹15 - ₹30 per tablet"
+            }, {
+                name: "ofloxacin",
+                displayName: "Ofloxacin (Oflox)",
+                uses: "UTI, diarrhea",
+                dosage: "200-400 mg twice daily",
+                sideEffects: "Nausea, insomnia",
+                priceRange: "₹50 - ₹90 for 10 tablets"
+            }, {
+                name: "ciprofloxacin",
+                displayName: "Ciprofloxacin (Ciplox)",
+                uses: "Skin, bone, stomach infection",
+                dosage: "500 mg twice daily",
+                sideEffects: "Joint pain",
+                priceRange: "₹30 - ₹60 for 10 tablets"
+            }, {
+                name: "metronidazole",
+                displayName: "Metronidazole (Flagyl)",
+                uses: "Loose motions, dental infection",
+                dosage: "400 mg thrice daily",
+                sideEffects: "Metallic taste",
+                priceRange: "₹15 - ₹25 for 15 tablets"
+            }, {
+                name: "pregabalin",
+                displayName: "Pregabalin (Lyrica)",
+                uses: "Nerve pain, fibromyalgia",
+                dosage: "75 mg once or twice daily",
+                sideEffects: "Weight gain, sleepiness",
+                priceRange: "₹120 - ₹250 for 10 capsules"
+            }, {
+                name: "salbutamol",
+                displayName: "Salbutamol (Asthalin)",
+                uses: "Asthma, wheezing",
+                dosage: "2-4 mg or inhaler as needed",
+                sideEffects: "Increased heart rate",
+                priceRange: "₹5 - ₹15 for 10 tablets"
+            }, {
+                name: "thyroxine",
+                displayName: "Thyroxine (Thyronorm)",
+                uses: "Hypothyroidism (Thyroid)",
+                dosage: "As prescribed, empty stomach",
+                sideEffects: "Heat sensitivity",
+                priceRange: "₹120 - ₹180 for 120 tablets"
+            }, {
+                name: "rosuvastatin",
+                displayName: "Rosuvastatin (Rosuvas)",
+                uses: "High cholesterol, heart protection",
+                dosage: "5-10 mg once daily at night",
+                sideEffects: "Headache, muscle ache",
+                priceRange: "₹80 - ₹200 for 10 tablets"
+            }, {
+                name: "clopidogrel",
+                displayName: "Clopidogrel (Clopilet)",
+                uses: "Prevent heart attack, blood thinner",
+                dosage: "75 mg once daily",
+                sideEffects: "Bleeding, bruising",
+                priceRange: "₹60 - ₹110 for 10 tablets"
+            }, {
+                name: "aspirin",
+                displayName: "Aspirin (Ecosprin)",
+                uses: "Blood thinner, prevent stroke",
+                dosage: "75-150 mg daily",
+                sideEffects: "Stomach acidity",
+                priceRange: "₹5 - ₹10 for 14 tablets"
+            }, {
+                name: "doxycycline",
+                displayName: "Doxycycline (Doxy-1L)",
+                uses: "Acne, malaria prevention",
+                dosage: "100 mg twice daily",
+                sideEffects: "Sun sensitivity",
+                priceRange: "₹20 - ₹50 for 10 capsules"
+            }, {
+                name: "levofloxacin",
+                displayName: "Levofloxacin (Loxof)",
+                uses: "Severe respiratory infections",
+                dosage: "500 mg once daily",
+                sideEffects: "Tendon pain",
+                priceRange: "₹60 - ₹110 for 10 tablets"
+            }, {
+                name: "prednisolone",
+                displayName: "Prednisolone (Wysolone)",
+                uses: "Inflammation, severe allergy",
+                dosage: "5-20 mg as prescribed",
+                sideEffects: "Weight gain",
+                priceRange: "₹10 - ₹25 for 15 tablets"
+            }, {
+                name: "tamsulosin",
+                displayName: "Tamsulosin (Urimax)",
+                uses: "Enlarged prostate (Urination)",
+                dosage: "0.4 mg once daily at night",
+                sideEffects: "Dizziness",
+                priceRange: "₹100 - ₹200 for 10 tablets"
+            }, {
+                name: "finasteride",
+                displayName: "Finasteride (Finax)",
+                uses: "Hair loss (Male pattern)",
+                dosage: "1 mg once daily",
+                sideEffects: "Decreased libido",
+                priceRange: "₹60 - ₹150 for 10 tablets"
+            }, {
+                name: "bisacodyl",
+                displayName: "Bisacodyl (Dulcolax)",
+                uses: "Constipation (Laxative)",
+                dosage: "5-10 mg at night",
+                sideEffects: "Cramps",
+                priceRange: "₹10 - ₹20 for 10 tablets"
+            }, {
+                name: "lactulose",
+                displayName: "Lactulose (Duphalac)",
+                uses: "Severe constipation",
+                dosage: "15-30 ml at night",
+                sideEffects: "Gas, bloating",
+                priceRange: "₹150 - ₹300 per bottle"
+            }, {
+                name: "digene",
+                displayName: "Antacid (Digene/Gelusil)",
+                uses: "Gas, acidity, indigestion",
+                dosage: "2 tablets or 10 ml after meals",
+                sideEffects: "Diarrhea or constipation",
+                priceRange: "₹15 - ₹40"
+            }, {
+                name: "multivitamin",
+                displayName: "Multivitamin (Revital/Zincovit)",
+                uses: "Immunity, general weakness",
+                dosage: "1 capsule daily after food",
+                sideEffects: "None",
+                priceRange: "₹100 - ₹150 for 15 tablets"
+            }, {
+                name: "iron_folic",
+                displayName: "Iron + Folic Acid (Dexorange)",
+                uses: "Anemia (Low blood)",
+                dosage: "One tablet daily",
+                sideEffects: "Black stools",
+                priceRange: "₹120 - ₹180"
+            }, {
+                name: "alprazolam",
+                displayName: "Alprazolam (Alprax)",
+                uses: "Anxiety, panic disorder",
+                dosage: "0.25-0.5 mg (Strictly by doctor)",
+                sideEffects: "Addiction, sleepiness",
+                priceRange: "₹20 - ₹50 for 10 tablets"
+            }, {
+                name: "furosemide",
+                displayName: "Furosemide (Lasix)",
+                uses: "Swelling (Fluid retention)",
+                dosage: "20-40 mg daily",
+                sideEffects: "Frequent urination",
+                priceRange: "₹5 - ₹15 for 10 tablets"
+            }, {
+                name: "spironolactone",
+                displayName: "Spironolactone (Aldactone)",
+                uses: "PCOS, heart failure",
+                dosage: "25-50 mg daily",
+                sideEffects: "Breast tenderness",
+                priceRange: "₹30 - ₹70 for 10 tablets"
+            }, {
+                name: "itraconazole",
+                displayName: "Itraconazole (Candiforce)",
+                uses: "Persistent fungal infection",
+                dosage: "100-200 mg daily",
+                sideEffects: "Nausea",
+                priceRange: "₹150 - ₹300 for 10 capsules"
+            }, {
+                name: "ceftriaxone",
+                displayName: "Ceftriaxone (Monocef Injection)",
+                uses: "Severe hospital infections",
+                dosage: "1-2g daily (Injection only)",
+                sideEffects: "Pain at site",
+                priceRange: "₹50 - ₹100 per vial"
+            }, {
+                name: "artemether",
+                displayName: "Artemether + Lumefantrine",
+                uses: "Malaria treatment",
+                dosage: "Specific 3-day course",
+                sideEffects: "Palpitations",
+                priceRange: "₹150 - ₹250"
+            }, {
+                name: "glimepiride",
+                displayName: "Glimepiride (Amaryl)",
+                uses: "Diabetes control",
+                dosage: "1-2 mg before breakfast",
+                sideEffects: "Low blood sugar",
+                priceRange: "₹40 - ₹90 for 10 tablets"
+            }, {
+                name: "vildagliptin",
+                displayName: "Vildagliptin (Galvus)",
+                uses: "Diabetes type 2",
+                dosage: "50 mg twice daily",
+                sideEffects: "Dizziness",
+                priceRange: "₹150 - ₹250 for 10 tablets"
+            }, {
+                name: "sitagliptin",
+                displayName: "Sitagliptin (Januvia)",
+                uses: "Advanced diabetes care",
+                dosage: "50-100 mg daily",
+                sideEffects: "Sore throat",
+                priceRange: "₹200 - ₹400 for 10 tablets"
+            }, {
+                name: "metoprolol",
+                displayName: "Metoprolol (Metolar)",
+                uses: "High BP, chest pain (Angina)",
+                dosage: "25-50 mg daily",
+                sideEffects: "Fatigue, slow heart rate",
+                priceRange: "₹30 - ₹80 for 10 tablets"
+            }, {
+                name: "atenolol",
+                displayName: "Atenolol (Tenormin)",
+                uses: "Hypertension, prevent migraine",
+                dosage: "25-50 mg daily",
+                sideEffects: "Cold hands/feet",
+                priceRange: "₹20 - ₹40 for 14 tablets"
+            }, {
+                name: "ramipril",
+                displayName: "Ramipril (Cardace)",
+                uses: "Heart failure, high BP",
+                dosage: "2.5-5 mg daily",
+                sideEffects: "Dry cough",
+                priceRange: "₹50 - ₹120 for 10 tablets"
+            }, {
+                name: "losartan",
+                displayName: "Losartan (Repace)",
+                uses: "BP management, kidney protection",
+                dosage: "50 mg once daily",
+                sideEffects: "High potassium",
+                priceRange: "₹30 - ₹70 for 10 tablets"
+            }, {
+                name: "gabapentin",
+                displayName: "Gabapentin (Gabapin)",
+                uses: "Post-shingles nerve pain",
+                dosage: "300-600 mg daily",
+                sideEffects: "Dizziness",
+                priceRange: "₹100 - ₹180 for 10 tablets"
+            }, {
+                name: "ketoconazole",
+                displayName: "Ketoconazole (Nizoral Shampoo/Cream)",
+                uses: "Dandruff, skin fungus",
+                dosage: "Twice a week (shampoo)",
+                sideEffects: "Skin irritation",
+                priceRange: "₹150 - ₹350"
+            }, {
+                name: "mometasone",
+                displayName: "Mometasone (Elocon Cream)",
+                uses: "Severe skin rash, eczema",
+                dosage: "Once daily thin layer",
+                sideEffects: "Thinning of skin",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "isotretinoin",
+                displayName: "Isotretinoin (Accutane)",
+                uses: "Severe cystic acne",
+                dosage: "10-20 mg (Strictly by Derm)",
+                sideEffects: "Extreme dry skin/lips",
+                priceRange: "₹200 - ₹500 for 10 capsules"
+            }, {
+                name: "clindamycin",
+                displayName: "Clindamycin (Dalacin)",
+                uses: "Pimples, vaginal infection",
+                dosage: "300 mg twice daily",
+                sideEffects: "Stomach pain",
+                priceRange: "₹150 - ₹300 for 10 capsules"
+            }, {
+                name: "betamethasone",
+                displayName: "Betamethasone (Betnovate)",
+                uses: "Itching, swelling, allergy",
+                dosage: "Apply twice daily",
+                sideEffects: "Stretch marks if overused",
+                priceRange: "₹20 - ₹50"
+            }, {
+                name: "levocetirizine",
+                displayName: "Levocetirizine (Levocet)",
+                uses: "Hay fever, chronic itching",
+                dosage: "5 mg at night",
+                sideEffects: "Tiredness",
+                priceRange: "₹30 - ₹60 for 10 tablets"
+            }, {
+                name: "hydroxyzine",
+                displayName: "Hydroxyzine (Atarax)",
+                uses: "Anxiety, severe skin allergy",
+                dosage: "10-25 mg as needed",
+                sideEffects: "Strong drowsiness",
+                priceRange: "₹40 - ₹80 for 15 tablets"
+            }, {
+                name: "allopurinol",
+                displayName: "Allopurinol (Zyloric)",
+                uses: "Gout (High uric acid)",
+                dosage: "100 mg once daily",
+                sideEffects: "Skin rash",
+                priceRange: "₹20 - ₹40 for 10 tablets"
+            }, {
+                name: "febuxostat",
+                displayName: "Febuxostat (Febuget)",
+                uses: "Severe Gout",
+                dosage: "40-80 mg once daily",
+                sideEffects: "Joint pain",
+                priceRange: "₹80 - ₹160 for 10 tablets"
+            }, {
+                name: "colchicine",
+                displayName: "Colchicine",
+                uses: "Acute gout attack",
+                dosage: "0.5 mg twice daily",
+                sideEffects: "Diarrhea",
+                priceRange: "₹50 - ₹100 for 10 tablets"
+            }, {
+                name: "dexamethasone",
+                displayName: "Dexamethasone (Dexona)",
+                uses: "Severe inflammation/COVID cases",
+                dosage: "0.5-4 mg as prescribed",
+                sideEffects: "Increased sugar",
+                priceRange: "₹5 - ₹10 for 30 tablets"
+            }, {
+                name: "methylprednisolone",
+                displayName: "Methylprednisolone (Medrol)",
+                uses: "Arthritis, severe asthma",
+                dosage: "4-16 mg as prescribed",
+                sideEffects: "Mood swings",
+                priceRange: "₹50 - ₹150 for 10 tablets"
+            }, {
+                name: "baclofen",
+                displayName: "Baclofen",
+                uses: "Muscle stiffness/spasm",
+                dosage: "5-10 mg thrice daily",
+                sideEffects: "Muscle weakness",
+                priceRange: "₹60 - ₹120 for 10 tablets"
+            }, {
+                name: "amitriptyline",
+                displayName: "Amitriptyline",
+                uses: "Depression, nerve pain, migraine",
+                dosage: "10-25 mg at night",
+                sideEffects: "Dry mouth, weight gain",
+                priceRange: "₹30 - ₹60 for 10 tablets"
+            }, {
+                name: "escitalopram",
+                displayName: "Escitalopram (Nexito)",
+                uses: "Depression, anxiety",
+                dosage: "5-10 mg daily",
+                sideEffects: "Nausea, low libido",
+                priceRange: "₹70 - ₹130 for 10 tablets"
+            }, {
+                name: "sertraline",
+                displayName: "Sertraline (Zoloft)",
+                uses: "OCD, depression",
+                dosage: "50 mg daily",
+                sideEffects: "Insomnia",
+                priceRange: "₹80 - ₹150 for 10 tablets"
+            }, {
+                name: "dextromethorphan",
+                displayName: "Dextromethorphan (Dry Cough)",
+                uses: "Dry cough suppressant",
+                dosage: "10 ml thrice daily",
+                sideEffects: "Sleepiness",
+                priceRange: "₹80 - ₹130 per bottle"
+            }, {
+                name: "ambroxol",
+                displayName: "Ambroxol (Wet Cough)",
+                uses: "Mucus/productive cough",
+                dosage: "30 mg thrice daily",
+                sideEffects: "Stomach upset",
+                priceRange: "₹60 - ₹100"
+            }, {
+                name: "ors",
+                displayName: "ORS (Electral)",
+                uses: "Dehydration",
+                dosage: "1 sachet in 1 liter water",
+                sideEffects: "None",
+                priceRange: "₹15 - ₹20"
+            }, {
+                name: "calcium_carb",
+                displayName: "Calcium + Vit D3 (Shelcal)",
+                uses: "Bone strength, pregnancy",
+                dosage: "500 mg daily",
+                sideEffects: "Constipation",
+                priceRange: "₹80 - ₹130"
+            }, {
+                name: "nitrofurantoin",
+                displayName: "Nitrofurantoin (Niftran)",
+                uses: "UTI (Urine infection)",
+                dosage: "100 mg twice daily",
+                sideEffects: "Dark urine",
+                priceRange: "₹100 - ₹200 for 10 capsules"
+            }, {
+                name: "methotrexate",
+                displayName: "Methotrexate",
+                uses: "Cancer, Rheumatoid Arthritis",
+                dosage: "7.5-15 mg ONCE A WEEK",
+                sideEffects: "Hair loss, liver issues",
+                priceRange: "₹50 - ₹150"
+            }, {
+                name: "dapagliflozin",
+                displayName: "Dapagliflozin (Forxiga)",
+                uses: "Diabetes, heart failure",
+                dosage: "10 mg once daily",
+                sideEffects: "Genital infections",
+                priceRange: "₹400 - ₹700 for 10 tablets"
+            }, {
+                name: "empagliflozin",
+                displayName: "Empagliflozin (Jardiance)",
+                uses: "Diabetes, kidney protection",
+                dosage: "10-25 mg daily",
+                sideEffects: "Frequent urination",
+                priceRange: "₹400 - ₹800"
+            }, {
+                name: "linagliptin",
+                displayName: "Linagliptin (Trajenta)",
+                uses: "Diabetes type 2",
+                dosage: "5 mg daily",
+                sideEffects: "Joint pain",
+                priceRange: "₹300 - ₹600"
+            }, {
+                name: "carvedilol",
+                displayName: "Carvedilol",
+                uses: "Heart failure management",
+                dosage: "3.125-6.25 mg daily",
+                sideEffects: "Dizziness",
+                priceRange: "₹40 - ₹90"
+            }, {
+                name: "valsartan",
+                displayName: "Valsartan",
+                uses: "Heart failure, high BP",
+                dosage: "80-160 mg daily",
+                sideEffects: "Low BP",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "nifedipine",
+                displayName: "Nifedipine (Nicardia)",
+                uses: "Severe BP, labor delay",
+                dosage: "10-20 mg as needed",
+                sideEffects: "Flushing",
+                priceRange: "₹30 - ₹70"
+            }, {
+                name: "torsemide",
+                displayName: "Torsemide (Tide)",
+                uses: "Water retention in heart patients",
+                dosage: "5-10 mg once daily",
+                sideEffects: "Dehydration",
+                priceRange: "₹40 - ₹80"
+            }, {
+                name: "chlorthalidone",
+                displayName: "Chlorthalidone",
+                uses: "Long-acting BP control",
+                dosage: "12.5 mg once daily",
+                sideEffects: "Low potassium",
+                priceRange: "₹30 - ₹60"
+            }, {
+                name: "zincovit",
+                displayName: "Zinc + Multivitamin (Zincovit)",
+                uses: "General health, post-viral recovery",
+                dosage: "1 tablet daily",
+                sideEffects: "Rare",
+                priceRange: "₹100 - ₹110 for 15 tablets"
+            }, {
+                name: "permethrin",
+                displayName: "Permethrin (Scaboma)",
+                uses: "Scabies, lice",
+                dosage: "Apply neck down for 8-12 hours",
+                sideEffects: "Burning sensation",
+                priceRange: "₹60 - ₹120"
+            }, {
+                name: "acyclovir",
+                displayName: "Acyclovir (Herperax)",
+                uses: "Herpes, chickenpox",
+                dosage: "400-800 mg 5 times a day",
+                sideEffects: "Headache",
+                priceRange: "₹60 - ₹130"
+            }, {
+                name: "oseltamivir",
+                displayName: "Oseltamivir (Antiflu)",
+                uses: "Swine flu, Influenza",
+                dosage: "75 mg twice daily for 5 days",
+                sideEffects: "Nausea",
+                priceRange: "₹400 - ₹600 for 10 capsules"
+            }, {
+                name: "naproxen",
+                displayName: "Naproxen (Naprosyn)",
+                uses: "Migraine, arthritic pain",
+                dosage: "250-500 mg twice daily",
+                sideEffects: "Acidity",
+                priceRange: "₹40 - ₹80"
+            }, {
+                name: "etoricoxib",
+                displayName: "Etoricoxib (Nucoxia)",
+                uses: "Severe osteoarthritis pain",
+                dosage: "60-90 mg once daily",
+                sideEffects: "High BP",
+                priceRange: "₹100 - ₹200 for 10 tablets"
+            }, {
+                name: "tramadol",
+                displayName: "Tramadol (Ultracet)",
+                uses: "Moderate to severe chronic pain",
+                dosage: "50 mg (with doctor monitor)",
+                sideEffects: "Nausea, addiction",
+                priceRange: "₹150 - ₹250"
+            }, {
+                name: "nimesulide",
+                displayName: "Nimesulide (Nise)",
+                uses: "Fast pain relief (Banned in kids)",
+                dosage: "100 mg twice daily",
+                sideEffects: "Liver toxicity if abused",
+                priceRange: "₹40 - ₹90"
+            }, {
+                name: "warfarin",
+                displayName: "Warfarin",
+                uses: "Strong blood thinner",
+                dosage: "As per INR test levels",
+                sideEffects: "Uncontrolled bleeding",
+                priceRange: "₹20 - ₹50"
+            }, {
+                name: "digoxin",
+                displayName: "Digoxin (Lanoxin)",
+                uses: "Heart failure, irregular heartbeat",
+                dosage: "0.25 mg daily",
+                sideEffects: "Vision changes",
+                priceRange: "₹15 - ₹30"
+            }, {
+                name: "nitroglycerin",
+                displayName: "Nitroglycerin (Sorvitrate)",
+                uses: "Emergency chest pain (Heart)",
+                dosage: "1 tab sublingual (under tongue)",
+                sideEffects: "Severe headache",
+                priceRange: "₹30 - ₹50"
+            }, {
+                name: "fluoxetine",
+                displayName: "Fluoxetine (Prozac)",
+                uses: "Depression, Bulimia",
+                dosage: "20 mg daily",
+                sideEffects: "Weight loss",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "duloxetine",
+                displayName: "Duloxetine",
+                uses: "Chronic body pain, depression",
+                dosage: "20-30 mg daily",
+                sideEffects: "Dry mouth",
+                priceRange: "₹100 - ₹200"
+            }, {
+                name: "haloperidol",
+                displayName: "Haloperidol",
+                uses: "Schizophrenia, severe agitation",
+                dosage: "As prescribed",
+                sideEffects: "Tremors",
+                priceRange: "₹20 - ₹50"
+            }, {
+                name: "quetiapine",
+                displayName: "Quetiapine",
+                uses: "Bipolar disorder, sleep (off-label)",
+                dosage: "As prescribed",
+                sideEffects: "Weight gain",
+                priceRange: "₹100 - ₹300"
+            }, {
+                name: "olanzapine",
+                displayName: "Olanzapine",
+                uses: "Psychosis",
+                dosage: "5-10 mg daily",
+                sideEffects: "High sleepiness",
+                priceRange: "₹50 - ₹150"
+            }, {
+                name: "levosalbutamol",
+                displayName: "Levosalbutamol (Levolin)",
+                uses: "Rescue inhaler for asthma",
+                dosage: "As needed",
+                sideEffects: "Shaking hands",
+                priceRange: "₹100 - ₹200"
+            }, {
+                name: "ipratropium",
+                displayName: "Ipratropium (Ipravent)",
+                uses: "COPD, severe wheezing",
+                dosage: "Nebulization or inhaler",
+                sideEffects: "Dry throat",
+                priceRange: "₹100 - ₹150"
+            }, {
+                name: "budesonide",
+                displayName: "Budesonide (Pulmicort)",
+                uses: "Steroid inhaler for asthma",
+                dosage: "Daily for prevention",
+                sideEffects: "Fungal throat infection",
+                priceRange: "₹200 - ₹500"
+            }, {
+                name: "miconazole",
+                displayName: "Miconazole (Cream)",
+                uses: "Sweat rash, fungal",
+                dosage: "Twice daily",
+                sideEffects: "Itching",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "terbinafine",
+                displayName: "Terbinafine (Sebifin)",
+                uses: "Stubborn fungal (Nail/Skin)",
+                dosage: "250 mg daily for 2-4 weeks",
+                sideEffects: "Taste changes",
+                priceRange: "₹150 - ₹300"
+            }, {
+                name: "clotrimazole",
+                displayName: "Clotrimazole (Candid)",
+                uses: "Ringworm, mouth thrush",
+                dosage: "Apply/dust 2-3 times",
+                sideEffects: "Local burning",
+                priceRange: "₹50 - ₹120"
+            }, {
+                name: "permethrin_lotion",
+                displayName: "Permethrin (Lice treatment)",
+                uses: "Head lice",
+                dosage: "Apply 10 mins, wash",
+                sideEffects: "Scalp itch",
+                priceRange: "₹60 - ₹100"
+            }, {
+                name: "senna",
+                displayName: "Senna (Softovac/Kayam)",
+                uses: "Ayurvedic/Herbal Laxative",
+                dosage: "1-2 spoons at night",
+                sideEffects: "Dependence if overused",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "activated_charcoal",
+                displayName: "Activated Charcoal",
+                uses: "Poisoning, flatulence (gas)",
+                dosage: "As directed",
+                sideEffects: "Black stools",
+                priceRange: "₹30 - ₹60"
+            }, {
+                name: "folic_acid",
+                displayName: "Folic Acid (Folvite)",
+                uses: "Pregnancy, anemia",
+                dosage: "5 mg daily",
+                sideEffects: "None",
+                priceRange: "₹20 - ₹40 for 30 tablets"
+            }, {
+                name: "zinc_supp",
+                displayName: "Zinc Gluconate",
+                uses: "Diarrhea in kids, immunity",
+                dosage: "20 mg daily for 14 days",
+                sideEffects: "Nausea",
+                priceRange: "₹40 - ₹70"
+            }, {
+                name: "vitamin_c",
+                displayName: "Vitamin C (Limcee)",
+                uses: "Scurvy, skin, immunity",
+                dosage: "500 mg chewable daily",
+                sideEffects: "None",
+                priceRange: "₹20 - ₹30 for 15 tablets"
+            }, {
+                name: "vitamin_b12",
+                displayName: "Vitamin B12 (Nurokind)",
+                uses: "Nerve weakness, deficiency",
+                dosage: "1500 mcg daily or injection",
+                sideEffects: "Rare",
+                priceRange: "₹100 - ₹200 for 10 tablets"
+            }, {
+                name: "melatonin",
+                displayName: "Melatonin",
+                uses: "Jet lag, sleep cycle",
+                dosage: "3-5 mg at bedtime",
+                sideEffects: "Daytime sleepiness",
+                priceRange: "₹150 - ₹300"
+            }, {
+                name: "omega3",
+                displayName: "Omega-3 (Fish Oil)",
+                uses: "Heart and brain health",
+                dosage: "1000 mg daily",
+                sideEffects: "Fishy burps",
+                priceRange: "₹300 - ₹800"
+            }, {
+                name: "chloroquine",
+                displayName: "Chloroquine (Lariago)",
+                uses: "Malaria, Lupus",
+                dosage: "Specific load dose",
+                sideEffects: "Eye damage (long term)",
+                priceRange: "₹10 - ₹30"
+            }, {
+                name: "hydroxychloroquine",
+                displayName: "HCQS",
+                uses: "Rheumatoid Arthritis",
+                dosage: "200-400 mg daily",
+                sideEffects: "Stomach pain",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "enoxaparin",
+                displayName: "Enoxaparin (Lovenox Injection)",
+                uses: "Post-surgery blood thinner",
+                dosage: "Subcutaneous injection",
+                sideEffects: "Bruising at site",
+                priceRange: "₹400 - ₹600"
+            }, {
+                name: "rivaroxaban",
+                displayName: "Rivaroxaban (Xarelto)",
+                uses: "New age blood thinner",
+                dosage: "10-20 mg daily",
+                sideEffects: "Risk of bleeding",
+                priceRange: "₹800 - ₹1500"
+            }, {
+                name: "hydralazine",
+                displayName: "Hydralazine",
+                uses: "Emergency high BP",
+                dosage: "As prescribed",
+                sideEffects: "Fast heart rate",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "methyldopa",
+                displayName: "Methyldopa",
+                uses: "High BP in Pregnancy",
+                dosage: "250 mg twice daily",
+                sideEffects: "Sedation",
+                priceRange: "₹40 - ₹80"
+            }, {
+                name: "lisinopril",
+                displayName: "Lisinopril",
+                uses: "BP and Heart protection",
+                dosage: "5-10 mg daily",
+                sideEffects: "Cough",
+                priceRange: "₹30 - ₹70"
+            }, {
+                name: "verapamil",
+                displayName: "Verapamil",
+                uses: "Chest pain, irregular BP",
+                dosage: "40-80 mg thrice daily",
+                sideEffects: "Constipation",
+                priceRange: "₹40 - ₹90"
+            }, {
+                name: "diltiazem",
+                displayName: "Diltiazem",
+                uses: "Hypertension",
+                dosage: "30-60 mg",
+                sideEffects: "Swelling",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "hydrochlorothiazide",
+                displayName: "Hydrochlorothiazide",
+                uses: "Mild BP (Diuretic)",
+                dosage: "12.5-25 mg daily",
+                sideEffects: "Muscle cramps",
+                priceRange: "₹10 - ₹30"
+            }, {
+                name: "eplerenone",
+                displayName: "Eplerenone",
+                uses: "Heart failure post-attack",
+                dosage: "25 mg daily",
+                sideEffects: "High potassium",
+                priceRange: "₹200 - ₹400"
+            }, {
+                name: "labetalol",
+                displayName: "Labetalol",
+                uses: "Blood pressure in pregnancy",
+                dosage: "100 mg twice daily",
+                sideEffects: "Scalp tingling",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "phenylephrine",
+                displayName: "Phenylephrine (In cold meds)",
+                uses: "Nasal decongestant",
+                dosage: "5-10 mg",
+                sideEffects: "Increased BP",
+                priceRange: "₹20 - ₹50"
+            }, {
+                name: "guaiphenesin",
+                displayName: "Guaiphenesin",
+                uses: "Chest congestion (Expectorant)",
+                dosage: "200-400 mg",
+                sideEffects: "Dizziness",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "clonazepam",
+                displayName: "Clonazepam (Zapiz)",
+                uses: "Seizures, extreme anxiety",
+                dosage: "0.25-0.5 mg",
+                sideEffects: "Severe addiction risk",
+                priceRange: "₹30 - ₹60"
+            }, {
+                name: "valproate",
+                displayName: "Sodium Valproate (Encorate)",
+                uses: "Epilepsy, Bipolar",
+                dosage: "200-500 mg daily",
+                sideEffects: "Weight gain, hair loss",
+                priceRange: "₹80 - ₹200"
+            }, {
+                name: "levetiracetam",
+                displayName: "Levetiracetam (Keppra)",
+                uses: "Modern Epilepsy drug",
+                dosage: "500 mg twice daily",
+                sideEffects: "Irritability",
+                priceRange: "₹150 - ₹400"
+            }, {
+                name: "carbamazepine",
+                displayName: "Carbamazepine (Tegritol)",
+                uses: "Nerve pain, fits",
+                dosage: "200 mg twice daily",
+                sideEffects: "Double vision",
+                priceRange: "₹30 - ₹80"
+            }, {
+                name: "phenytoin",
+                displayName: "Phenytoin (Eptoin)",
+                uses: "Seizures control",
+                dosage: "100 mg thrice daily",
+                sideEffects: "Gum swelling",
+                priceRange: "₹30 - ₹60"
+            }, {
+                name: "propofol",
+                displayName: "Propofol",
+                uses: "Anesthesia (Hospital only)",
+                dosage: "IV only",
+                sideEffects: "Respiratory drop",
+                priceRange: "₹200 - ₹500"
+            }, {
+                name: "heparin",
+                displayName: "Heparin",
+                uses: "Acute blood thinning",
+                dosage: "IV/SC injection",
+                sideEffects: "Bleeding",
+                priceRange: "₹100 - ₹300"
+            }, {
+                name: "acetazolamide",
+                displayName: "Acetazolamide (Diamox)",
+                uses: "Altitude sickness, Glaucoma",
+                dosage: "250 mg twice daily",
+                sideEffects: "Tingling in fingers",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "brimonidine",
+                displayName: "Brimonidine Eye Drops",
+                uses: "Glaucoma (Eye pressure)",
+                dosage: "1 drop twice daily",
+                sideEffects: "Eye redness",
+                priceRange: "₹200 - ₹400"
+            }, {
+                name: "carboxymethylcellulose",
+                displayName: "Lubricating Eye Drops (Refresh)",
+                uses: "Dry eyes, computer strain",
+                dosage: "As needed",
+                sideEffects: "Blurry vision (temp)",
+                priceRange: "₹150 - ₹300"
+            }, {
+                name: "timolol",
+                displayName: "Timolol Eye Drops",
+                uses: "High eye pressure",
+                dosage: "1 drop twice daily",
+                sideEffects: "Low pulse",
+                priceRange: "₹50 - ₹100"
+            }, {
+                name: "betahistine",
+                displayName: "Betahistine (Vertin)",
+                uses: "Vertigo (Dizziness)",
+                dosage: "8-16 mg thrice daily",
+                sideEffects: "Nausea",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "cinnarizine",
+                displayName: "Cinnarizine (Stugeron)",
+                uses: "Motion sickness, vertigo",
+                dosage: "25 mg as needed",
+                sideEffects: "Weight gain",
+                priceRange: "₹50 - ₹150"
+            }, {
+                name: "domperidone_syp",
+                displayName: "Domperidone Syrup",
+                uses: "Vomiting in kids",
+                dosage: "As per weight (doctor)",
+                sideEffects: "None at dose",
+                priceRange: "₹30 - ₹60"
+            }, {
+                name: "teneligliptin",
+                displayName: "Teneligliptin (Teniva)",
+                uses: "Type 2 Diabetes mellitus",
+                dosage: "20 mg once daily",
+                sideEffects: "Constipation, headache, upper respiratory tract infection",
+                priceRange: "₹70 - ₹150 for 15 tablets"
+            }, {
+                name: "voglibose",
+                displayName: "Voglibose (Voglistar)",
+                uses: "Post-meal high blood sugar in Diabetes",
+                dosage: "0.2-0.3 mg thrice daily before meals",
+                sideEffects: "Flatulence, diarrhea, abdominal pain",
+                priceRange: "₹50 - ₹100 for 10 tablets"
+            }, {
+                name: "dapagliflozin",
+                displayName: "Dapagliflozin (Forxiga)",
+                uses: "Diabetes and Heart failure",
+                dosage: "5-10 mg once daily",
+                sideEffects: "Genital fungal infections, increased urination",
+                priceRange: "₹500 - ₹900 for 14 tablets"
+            }, {
+                name: "gliclazide",
+                displayName: "Gliclazide (Diamicron)",
+                uses: "Type 2 Diabetes",
+                dosage: "30-60 mg once daily with breakfast",
+                sideEffects: "Low blood sugar, stomach upset",
+                priceRange: "₹100 - ₹180 for 15 tablets"
+            }, {
+                name: "sacubitril_valsartan",
+                displayName: "Sacubitril + Valsartan (Vymada)",
+                uses: "Chronic heart failure",
+                dosage: "50-100 mg twice daily",
+                sideEffects: "Low blood pressure, cough, high potassium",
+                priceRange: "₹1000 - ₹1500 for 14 tablets"
+            }, {
+                name: "torsemide",
+                displayName: "Torsemide (Tide 10)",
+                uses: "Swelling (Edema) associated with heart/kidney",
+                dosage: "5-10 mg once daily",
+                sideEffects: "Dehydration, headache, dizziness",
+                priceRange: "₹40 - ₹80 for 15 tablets"
+            }, {
+                name: "eplerenone",
+                displayName: "Eplerenone (Eptus)",
+                uses: "Heart failure after a heart attack",
+                dosage: "25-50 mg once daily",
+                sideEffects: "High potassium, dizziness",
+                priceRange: "₹200 - ₹400 for 10 tablets"
+            }, {
+                name: "ivabradine",
+                displayName: "Ivabradine (Ivabrad)",
+                uses: "Stable heart-related chest pain (Angina)",
+                dosage: "5 mg twice daily with food",
+                sideEffects: "Luminous visual phenomena (brightness)",
+                priceRange: "₹150 - ₹250 for 10 tablets"
+            }, {
+                name: "ranolazine",
+                displayName: "Ranolazine (Ranexa)",
+                uses: "Chronic Angina (Chest pain)",
+                dosage: "500 mg twice daily",
+                sideEffects: "Dizziness, constipation, nausea",
+                priceRange: "₹180 - ₹300 for 10 tablets"
+            }, {
+                name: "ticagrelor",
+                displayName: "Ticagrelor (Brilinta)",
+                uses: "Prevention of heart attack/stroke",
+                dosage: "90 mg twice daily",
+                sideEffects: "Shortness of breath, bleeding",
+                priceRange: "₹400 - ₹800 for 14 tablets"
+            }, {
+                name: "prasugrel",
+                displayName: "Prasugrel (Prasudoc)",
+                uses: "Blood thinner for heart stent patients",
+                dosage: "10 mg once daily",
+                sideEffects: "Easy bruising, nosebleeds",
+                priceRange: "₹150 - ₹280 for 10 tablets"
+            }, {
+                name: "nicorandil",
+                displayName: "Nicorandil (Nikoran)",
+                uses: "Angina (Chest pain) prevention",
+                dosage: "5-10 mg twice daily",
+                sideEffects: "Severe headache, mouth ulcers",
+                priceRange: "₹100 - ₹200 for 10 tablets"
+            }, {
+                name: "ursodeoxycholic_acid_600",
+                displayName: "UDCA (Udiliv 600)",
+                uses: "Liver cirrhosis and gallstones",
+                dosage: "600 mg once daily at night",
+                sideEffects: "Pastry stools, nausea",
+                priceRange: "₹500 - ₹800 for 10 tablets"
+            }, {
+                name: "rifaximin",
+                displayName: "Rifaximin (Rcifax)",
+                uses: "Hepatic encephalopathy, IBS with diarrhea",
+                dosage: "200-400 mg thrice daily",
+                sideEffects: "Dizziness, fatigue, nausea",
+                priceRange: "₹200 - ₹400 for 10 tablets"
+            }, {
+                name: "levosulpiride",
+                displayName: "Levosulpiride (Lesuride)",
+                uses: "GERD, IBS, dyspepsia",
+                dosage: "25 mg thrice daily before meals",
+                sideEffects: "Sleepiness, breast tenderness",
+                priceRange: "₹60 - ₹120 for 10 tablets"
+            }, {
+                name: "itopride",
+                displayName: "Itopride (Ganaton)",
+                uses: "Indigestion and bloating",
+                dosage: "50 mg thrice daily before meals",
+                sideEffects: "Diarrhea, headache",
+                priceRange: "₹120 - ₹200 for 15 tablets"
+            }, {
+                name: "bilastine",
+                displayName: "Bilastine (Bila-Res)",
+                uses: "Allergic rhinitis and hives",
+                dosage: "20 mg once daily",
+                sideEffects: "Headache, drowsiness",
+                priceRange: "₹100 - ₹180 for 10 tablets"
+            }, {
+                name: "ebastine",
+                displayName: "Ebastine (Ebast)",
+                uses: "Seasonal allergies",
+                dosage: "10-20 mg once daily",
+                sideEffects: "Dry mouth, headache",
+                priceRange: "₹80 - ₹140 for 10 tablets"
+            }, {
+                name: "hydroxyzine",
+                displayName: "Hydroxyzine (Atarax)",
+                uses: "Anxiety and skin itching",
+                dosage: "10-25 mg at night",
+                sideEffects: "Sedation, dry mouth",
+                priceRange: "₹40 - ₹80 for 15 tablets"
+            }, {
+                name: "mefloquine",
+                displayName: "Mefloquine (Meftas)",
+                uses: "Malaria treatment and prevention",
+                dosage: "As prescribed (Weekly dose)",
+                sideEffects: "Dizziness, vivid dreams, anxiety",
+                priceRange: "₹100 - ₹200 for 4 tablets"
+            }, {
+                name: "artemether_lumefantrine",
+                displayName: "Artemether + Lumefantrine (Lumerax)",
+                uses: "Acute Malaria",
+                dosage: "80/480 mg twice daily for 3 days",
+                sideEffects: "Headache, dizziness, palpitations",
+                priceRange: "₹150 - ₹250 for 6 tablets"
+            }, {
+                name: "clindamycin",
+                displayName: "Clindamycin (Dalacin C)",
+                uses: "Bacterial infections and Acne",
+                dosage: "300 mg twice daily",
+                sideEffects: "Severe diarrhea, stomach cramps",
+                priceRange: "₹200 - ₹400 for 10 capsules"
+            }, {
+                name: "moxifloxacin",
+                displayName: "Moxifloxacin (Mahaflox)",
+                uses: "Pneumonia and eye infections",
+                dosage: "400 mg once daily or eye drops",
+                sideEffects: "Nausea, dizziness",
+                priceRange: "₹200 - ₹350 for 5 tablets"
+            }, {
+                name: "nitrofurantoin",
+                displayName: "Nitrofurantoin (Niftran)",
+                uses: "Urinary Tract Infection (UTI)",
+                dosage: "100 mg twice daily for 7 days",
+                sideEffects: "Nausea, dark urine",
+                priceRange: "₹80 - ₹150 for 10 capsules"
+            }, {
+                name: "fosfomycin",
+                displayName: "Fosfomycin (Fosirol)",
+                uses: "Acute UTI (Single dose)",
+                dosage: "3g sachet in water (Single dose)",
+                sideEffects: "Vaginal inflammation, headache",
+                priceRange: "₹300 - ₹500 per sachet"
+            }, {
+                name: "valacyclovir",
+                displayName: "Valacyclovir (Valcivir)",
+                uses: "Herpes, Shingles",
+                dosage: "500-1000 mg twice daily",
+                sideEffects: "Headache, nausea",
+                priceRange: "₹300 - ₹600 for 10 tablets"
+            }, {
+                name: "oseltamivir",
+                displayName: "Oseltamivir (Antiflu)",
+                uses: "Swine Flu, Influenza A/B",
+                dosage: "75 mg twice daily for 5 days",
+                sideEffects: "Vomiting, headache",
+                priceRange: "₹400 - ₹600 for 10 capsules"
+            }, {
+                name: "lamivudine",
+                displayName: "Lamivudine (Lamivir)",
+                uses: "HIV infection and Hepatitis B",
+                dosage: "100-150 mg once or twice daily",
+                sideEffects: "Fatigue, headache",
+                priceRange: "₹200 - ₹500 for 30 tablets"
+            }, {
+                name: "entecavir",
+                displayName: "Entecavir (Baraclude)",
+                uses: "Chronic Hepatitis B",
+                dosage: "0.5 mg once daily on empty stomach",
+                sideEffects: "Nausea, dizziness",
+                priceRange: "₹600 - ₹1200 for 30 tablets"
+            }, {
+                name: "ribavirin",
+                displayName: "Ribavirin (Rebetol)",
+                uses: "Hepatitis C and Viral fever",
+                dosage: "As prescribed (Weight based)",
+                sideEffects: "Anemia, fatigue",
+                priceRange: "₹400 - ₹800 for 10 tablets"
+            }, {
+                name: "itraconazole_dusting_powder",
+                displayName: "Itraconazole Powder (Itaspor)",
+                uses: "Fungal infections in skin folds",
+                dosage: "Dust over affected area twice daily",
+                sideEffects: "Local irritation",
+                priceRange: "₹100 - ₹200 per 100g"
+            }, {
+                name: "luliconazole",
+                displayName: "Luliconazole (Lulifin)",
+                uses: "Ringworm, Jock itch",
+                dosage: "Apply once daily for 2 weeks",
+                sideEffects: "Burning, redness",
+                priceRange: "₹200 - ₹400 per 30g"
+            }, {
+                name: "amphotericin_b",
+                displayName: "Amphotericin B Gel",
+                uses: "Fungal infections of mouth/skin",
+                dosage: "As directed by specialist",
+                sideEffects: "Fever, chills (if injection)",
+                priceRange: "₹200 - ₹500"
+            }, {
+                name: "coal_tar",
+                displayName: "Coal Tar Shampoo (Ionil-T)",
+                uses: "Psoriasis of scalp, Seborrheic dermatitis",
+                dosage: "Apply 2-3 times a week",
+                sideEffects: "Staining of hair/skin",
+                priceRange: "₹250 - ₹450"
+            }, {
+                name: "salicylic_acid",
+                displayName: "Salicylic Acid (Salicylix)",
+                uses: "Acne, Warts, Psoriasis",
+                dosage: "Apply once daily",
+                sideEffects: "Skin peeling, dryness",
+                priceRange: "₹80 - ₹150"
+            }, {
+                name: "adapalene_clindamycin",
+                displayName: "Adapalene + Clindamycin (Deriva CMS)",
+                uses: "Severe Acne/Pimples",
+                dosage: "Apply pea-sized amount at night",
+                sideEffects: "Skin burning, redness",
+                priceRange: "₹250 - ₹450"
+            }, {
+                name: "azelaic_acid",
+                displayName: "Azelaic Acid (Aziderm)",
+                uses: "Acne and Rosacea",
+                dosage: "Apply twice daily",
+                sideEffects: "Tingling, itching",
+                priceRange: "₹200 - ₹400"
+            }, {
+                name: "hydroquinone",
+                displayName: "Hydroquinone (Melalite)",
+                uses: "Melasma, dark spots",
+                dosage: "Apply at night only (Sunscreen essential)",
+                sideEffects: "Skin redness, sensitivity",
+                priceRange: "₹100 - ₹250"
+            }, {
+                name: "desonide",
+                displayName: "Desonide (Desowen)",
+                uses: "Mild to moderate skin eczema",
+                dosage: "Apply twice daily",
+                sideEffects: "Skin thinning (if used long term)",
+                priceRange: "₹200 - ₹350"
+            }, {
+                name: "tacrolimus_ointment",
+                displayName: "Tacrolimus (Tacroz)",
+                uses: "Severe Eczema, Vitiligo",
+                dosage: "Apply twice daily",
+                sideEffects: "Burning sensation",
+                priceRange: "₹400 - ₹700"
+            }, {
+                name: "isotretinoin",
+                displayName: "Isotretinoin (Accutane/Acnecutan)",
+                uses: "Severe cystic acne",
+                dosage: "10-20 mg daily as prescribed (Strict Rx)",
+                sideEffects: "Dry lips, dry eyes, birth defects",
+                priceRange: "₹200 - ₹500 for 10 tablets"
+            }, {
+                name: "finasteride_1mg",
+                displayName: "Finasteride (Finpecia 1mg)",
+                uses: "Male pattern baldness",
+                dosage: "1 mg once daily for 6-12 months",
+                sideEffects: "Sexual dysfunction, breast growth",
+                priceRange: "₹100 - ₹200 for 15 tablets"
+            }, {
+                name: "tamsulosin_dutasteride",
+                displayName: "Tamsulosin + Dutasteride (Urimax D)",
+                uses: "Enlarged Prostate (BPH)",
+                dosage: "One capsule at night after food",
+                sideEffects: "Retrograde ejaculation, dizziness",
+                priceRange: "₹300 - ₹500 for 15 capsules"
+            }, {
+                name: "mirabegron",
+                displayName: "Mirabegron (Mirago)",
+                uses: "Overactive bladder (frequent urination)",
+                dosage: "25-50 mg once daily",
+                sideEffects: "Increased blood pressure, headache",
+                priceRange: "₹300 - ₹600 for 10 tablets"
+            }, {
+                name: "tolterodine",
+                displayName: "Tolterodine (Detrol)",
+                uses: "Urinary incontinence",
+                dosage: "2 mg twice daily",
+                sideEffects: "Dry mouth, constipation",
+                priceRange: "₹150 - ₹300 for 10 tablets"
+            }, {
+                name: "darifenacin",
+                displayName: "Darifenacin (Dariten)",
+                uses: "Urinary urgency",
+                dosage: "7.5 mg once daily",
+                sideEffects: "Dry mouth, blurred vision",
+                priceRange: "₹250 - ₹450 for 10 tablets"
+            }, {
+                name: "sildenafil_revatio",
+                displayName: "Sildenafil (Revatio)",
+                uses: "Pulmonary Arterial Hypertension",
+                dosage: "20 mg thrice daily",
+                sideEffects: "Flushing, nosebleed",
+                priceRange: "₹100 - ₹300 for 10 tablets"
+            }, {
+                name: "tadalafil",
+                displayName: "Tadalafil (Cialis/Megalis)",
+                uses: "Erectile Dysfunction, BPH",
+                dosage: "5-20 mg as prescribed",
+                sideEffects: "Back pain, muscle ache",
+                priceRange: "₹50 - ₹150 per tablet"
+            }, {
+                name: "vardenafil",
+                displayName: "Vardenafil (Valif)",
+                uses: "Erectile Dysfunction",
+                dosage: "10-20 mg as needed",
+                sideEffects: "Headache, dizziness",
+                priceRange: "₹40 - ₹100 per tablet"
+            }, {
+                name: "dapoxetine",
+                displayName: "Dapoxetine (Poxet)",
+                uses: "Premature Ejaculation",
+                dosage: "30-60 mg 1-3 hours before activity",
+                sideEffects: "Nausea, dizziness, headache",
+                priceRange: "₹100 - ₹250 for 4 tablets"
+            }
+     ];
+
+        // ---------- EMERGENCY CONTACTS ----------
+        const emergencyContacts = {
+            india: { country: "India", ambulance: "102", police: "100", fire: "101", poison: "1800-11-6111" },
+            us: { country: "USA", ambulance: "911", police: "911", fire: "911", poison: "1-800-222-1222" },
+            uk: { country: "UK", ambulance: "999", police: "999", fire: "999", poison: "111" },
+            canada: { country: "Canada", ambulance: "911", police: "911", fire: "911", poison: "1-844-764-7669" },
+            australia: { country: "Australia", ambulance: "000", police: "000", fire: "000", poison: "13 11 26" }
+        };
+
+        // ---------- BLOG ARTICLES METADATA (for index.html – only titles & summaries) ----------
+        const blogMetadata = [
+            { id: 1, title: "Research Roundup: Latest Breakthroughs in Diabetes Care", summary: "A curated summary of the newest studies on diabetes management, medications, and lifestyle interventions." },
+            { id: 2, title: "Myths and Misconceptions About Vaccines", summary: "Separating fact from fiction – we debunk common vaccine myths with science." },
+            { id: 3, title: "National Health Observances: October Awareness Days", summary: "October is packed with health awareness events – here’s how you can participate." },
+            { id: 4, title: "Living with Epilepsy: A Patient's Story", summary: "Riya shares her journey from diagnosis to advocacy – and how she found strength in community." },
+            { id: 5, title: "Q&A with the American Lung Association", summary: "We sat down with Dr. Meera Sharma to discuss lung cancer screening, air quality, and advocacy." },
+            { id: 6, title: "Clinical Trials: What You Need to Know", summary: "A beginner’s guide to participating in medical research – benefits, risks, and how to find trials." },
+            { id: 7, title: "Frequently Asked Questions About Cholesterol", summary: "Your top questions about LDL, HDL, triglycerides – answered simply." },
+            { id: 8, title: "Medical Jargon Explained: 10 Terms You Should Know", summary: "From 'benign' to 'idiopathic' – a plain‑language guide to confusing medical words." },
+            { id: 9, title: "10 Tips for Managing Migraine at Home", summary: "Lifestyle changes and remedies that can reduce the frequency and severity of migraines." },
+            { id: 10, title: "Health Tech Innovators to Watch in 2025", summary: "Five companies transforming patient care through AI, wearables, and telemedicine." },
+            { id: 11, title: "Recap: HIMSS 2025 Key Takeaways", summary: "Our team attended the global health conference – here are the top trends." },
+            { id: 12, title: "Support Resources for Alzheimer’s Caregivers", summary: "A curated list of organisations, hotlines, and online communities for those caring for loved ones with dementia." },
+            { id: 13, title: "5 Trends Reshaping Global Health", summary: "From personalised vaccines to climate‑conscious healthcare – what you need to know." },
+            { id: 14, title: "From Webinar to Blog: Repurposing Content", summary: "How we transformed a 60‑minute webinar into five high‑performing blog posts – a case study." },
+            { id: 15, title: "Staying Healthy During Monsoon Season", summary: "Prevent waterborne diseases, mosquito breeding, and fungal infections with these tips." },
+            { id: 16, title: "Caregiver Corner: Avoiding Burnout", summary: "Practical self‑care strategies for family caregivers – you can’t pour from an empty cup." },
+            { id: 17, title: "Press Release: MediConnect Partners with Apollo Hospitals", summary: "We’re excited to announce a collaboration to integrate emergency services and hospital locator data." },
+            { id: 18, title: "Deep Dive: How GLP‑1 Agonists Work for Weight Loss", summary: "Beyond diabetes – the science behind semaglutide, liraglutide, and the new generation of anti‑obesity drugs." },
+            { id: 19, title: "Small Cell vs Non‑Small Cell Lung Cancer", summary: "What’s the difference? Prognosis, treatment approaches, and key biomarkers explained." },
+            { id: 20, title: "Guest Post: Nutrition Tips for Cancer Survivors", summary: "Registered dietitian Laura M. shares evidence‑based advice on eating well during and after treatment." }
+        ];
+
+        // ---------- REMINDER SYSTEM ----------
+        let reminders = JSON.parse(localStorage.getItem('medReminders')) || [];
+        let audioContext = null;
+        let reminderInterval = null;
+
+        if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
+
+        function initAudio() {
+            if (audioContext) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playAlertSound() {
+            initAudio();
+            if (audioContext.state === 'suspended') audioContext.resume();
+            const now = audioContext.currentTime;
+            for (let i = 0; i < 3; i++) {
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                gainNode.gain.setValueAtTime(0.3, now + i * 0.15);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + i * 0.15 + 0.1);
+                osc.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                osc.start(now + i * 0.15);
+                osc.stop(now + i * 0.15 + 0.2);
+            }
+        }
+
+        function startReminderChecker() {
+            if (reminderInterval) clearInterval(reminderInterval);
+            reminderInterval = setInterval(() => {
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                reminders.forEach(r => {
+                    if (!r.taken && r.time === currentTime) {
+                        if (Notification.permission === 'granted') {
+                            new Notification('MediConnect Reminder', {
+                                body: `Time to take ${r.medicine}`,
+                                icon: 'https://cdn-icons-png.flaticon.com/512/2966/2966327.png',
+                                silent: false
+                            });
+                        }
+                        playAlertSound();
+                        r.taken = true;
+                        saveReminders();
+                        alert(`⏰ Medicine Reminder: ${r.medicine} at ${r.time}`);
+                    }
+                });
+            }, 60000);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            if (reminderInterval) clearInterval(reminderInterval);
+        });
+
+        function saveReminders() { 
+            localStorage.setItem('medReminders', JSON.stringify(reminders)); 
+            displayReminders(); 
+        }
+        
+        window.addReminder = function() {
+            const med = document.getElementById('reminderMed').value.trim();
+            const time = document.getElementById('reminderTime').value;
+            if (!med || !time) return alert('Enter medicine and time');
+            if (Notification.permission !== 'granted') Notification.requestPermission();
+            reminders.push({ id: Date.now(), medicine: med, time, taken: false });
+            saveReminders();
+            document.getElementById('reminderMed').value = '';
+            document.getElementById('reminderTime').value = '';
+            alert(`⏰ Reminder set for ${med} at ${time}. You'll hear a beep and get a notification.`);
+            initAudio();
+        };
+        
+        window.markTaken = function(id) { 
+            let r = reminders.find(r => r.id === id); 
+            if(r) r.taken = true; 
+            saveReminders(); 
+        };
+        
+        window.deleteReminder = function(id) { 
+            reminders = reminders.filter(r => r.id !== id); 
+            saveReminders(); 
+        };
+        
+        function displayReminders() {
+            const list = document.getElementById('reminderList');
+            if (!reminders.length) list.innerHTML = '<p style="color:#64748b; text-align:center;">No reminders yet.</p>';
+            else list.innerHTML = reminders.map(r => `
+                <div class="reminder-item">
+                    <div><strong>${r.medicine}</strong> at ${r.time} ${r.taken ? '✅' : '⏳'}</div>
+                    <div>
+                        <button onclick="markTaken(${r.id})" style="background:#10b981; color:white; border:none; padding:0.4rem 0.9rem; border-radius:30px;"><i class="fas fa-check"></i></button>
+                        <button onclick="deleteReminder(${r.id})" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.9rem; border-radius:30px; margin-left:0.5rem;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ---------- TAB SWITCHING ----------
+        window.openTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            if (tabId === 'nearby') setTimeout(() => initMap(), 100);
+            if (tabId === 'blogs') populateBlogGrid(); // Populate blogs when tab opens
+        };
+
+        // ---------- MAP FUNCTIONS (Bhubaneswar fallback) ----------
+        window.initMap = function() {
+            if (map) {
+                if (userLat && userLon) { map.setView([userLat, userLon], 14); searchNearby(); } 
+                else getUserLocation();
+                return;
+            }
+            map = L.map('map').setView([20.2961, 85.8245], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(map);
+            markersLayer = L.layerGroup().addTo(map);
+            getUserLocation();
+        };
+
+        window.getUserLocation = function() {
+            document.getElementById('placeList').innerHTML = '<div class="loader" style="margin:2rem auto;"></div>';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        userLat = position.coords.latitude; userLon = position.coords.longitude;
+                        map.setView([userLat, userLon], 14);
+                        if (userMarker) map.removeLayer(userMarker);
+                        userMarker = L.marker([userLat, userLon], {
+                            icon: L.divIcon({ className: 'user-marker', html: '<i class="fas fa-circle-user" style="font-size: 2rem; color: #2563eb; text-shadow: 0 0 10px white;"></i>', iconSize: [32,32], iconAnchor: [16,16] })
+                        }).addTo(map).bindPopup('You are here');
+                        searchNearby();
+                    },
+                    error => {
+                        userLat = 20.2961; userLon = 85.8245;
+                        map.setView([userLat, userLon], 12);
+                        userMarker = L.marker([userLat, userLon], {
+                            icon: L.divIcon({ html: '<i class="fas fa-circle-user" style="font-size: 2rem; color: #2563eb;"></i>', iconSize: [32,32], iconAnchor: [16,16] })
+                        }).addTo(map).bindPopup('Fallback: Bhubaneswar');
+                        document.getElementById('placeList').innerHTML = '<li class="card" style="color:#b91c1c;">❌ Location access denied. Showing results for Bhubaneswar as fallback.</li>';
+                        searchNearby();
+                    }
+                );
+            } else {
+                userLat = 20.2961; userLon = 85.8245;
+                map.setView([userLat, userLon], 12);
+                userMarker = L.marker([userLat, userLon]).addTo(map).bindPopup('Fallback: Bhubaneswar');
+                document.getElementById('placeList').innerHTML = '<li class="card" style="color:#b91c1c;">❌ Geolocation not supported. Showing results for Bhubaneswar.</li>';
+                searchNearby();
+            }
+        };
+
+        window.setPlaceType = function(type) {
+            currentPlaceType = type;
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            if (type === 'hospital') document.getElementById('optHospital').classList.add('active');
+            if (type === 'clinic') document.getElementById('optClinic').classList.add('active');
+            if (type === 'pharmacy') document.getElementById('optPharmacy').classList.add('active');
+            document.getElementById('placeTypeLabel').innerText = type === 'hospital' ? 'hospitals' : (type === 'clinic' ? 'clinics' : 'medical stores');
+            searchNearby();
+        };
+
+        function getDirectionsUrl(destLat, destLon) {
+            return `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLon}&destination=${destLat},${destLon}&travelmode=driving`;
+        }
+
+        window.searchNearby = function() {
+            if (!map || !userLat || !userLon) return;
+            document.getElementById('placeList').innerHTML = '<div class="loader" style="margin:2rem auto;"></div>';
+            document.getElementById('placeCount').innerText = '0';
+            if (markersLayer) markersLayer.clearLayers();
+            else markersLayer = L.layerGroup().addTo(map);
+            let osmTag = currentPlaceType === 'hospital' ? 'amenity=hospital' : (currentPlaceType === 'clinic' ? 'amenity=clinic' : 'amenity=pharmacy');
+            const radius = 10000;
+            const query = `[out:json];(node[${osmTag}](around:${radius},${userLat},${userLon});way[${osmTag}](around:${radius},${userLat},${userLon});relation[${osmTag}](around:${radius},${userLat},${userLon}););out center tags;`;
+            fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+                .then(r => r.json())
+                .then(data => {
+                    let elements = data.elements;
+                    if (!elements.length) {
+                        document.getElementById('placeList').innerHTML = `<li class="card" style="text-align:center;">No ${currentPlaceType}s found within 10km.</li>`;
+                        document.getElementById('placeCount').innerText = '0'; return;
+                    }
+                    let places = [];
+                    elements.forEach(el => {
+                        let lat, lon;
+                        if (el.type === 'node') { lat = el.lat; lon = el.lon; } 
+                        else if (el.center) { lat = el.center.lat; lon = el.center.lon; } else return;
+                        const dist = getDistance(userLat, userLon, lat, lon);
+                        places.push({
+                            name: el.tags?.name || `Unnamed ${currentPlaceType}`,
+                            lat, lon, distance: dist,
+                            phone: el.tags?.phone || el.tags?.['contact:phone'] || 'Not listed',
+                            address: el.tags?.['addr:full'] || [el.tags?.['addr:street'], el.tags?.['addr:housenumber']].filter(Boolean).join(' ') || 'Address not available'
+                        });
+                    });
+                    places.sort((a,b) => a.distance - b.distance);
+                    document.getElementById('placeCount').innerText = places.length;
+                    let html = '';
+                    places.forEach((p,i) => {
+                        L.marker([p.lat, p.lon]).addTo(markersLayer).bindPopup(`<strong>${p.name}</strong><br>${p.address}<br>📞 ${p.phone}<br>${p.distance.toFixed(1)} km away<br><a href="${getDirectionsUrl(p.lat, p.lon)}" target="_blank" style="display:inline-block; margin-top:8px; background:#10b981; color:white; padding:6px 12px; border-radius:30px; text-decoration:none;"><i class="fas fa-location-arrow"></i> Directions</a>`);
+                        html += `<li class="place-item"><div class="place-info"><strong style="font-size:1.1rem;">${i+1}. ${p.name}</strong><br><span style="color:#475569;">${p.address}</span><br>📞 ${p.phone}</div><div class="place-actions"><span class="distance-badge">${p.distance.toFixed(1)} km</span><a href="${getDirectionsUrl(p.lat, p.lon)}" target="_blank" class="direction-btn"><i class="fas fa-location-arrow"></i> Directions</a></div></li>`;
+                    });
+                    document.getElementById('placeList').innerHTML = html;
+                })
+                .catch(() => {
+                    document.getElementById('placeList').innerHTML = '<li class="card" style="color:#b91c1c;">⚠️ Error loading facilities. Try again.</li>';
+                    document.getElementById('placeCount').innerText = '0';
+                });
+        };
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        // ---------- QUICK SEARCH ----------
+        window.quickSearch = function() {
+            let q = document.getElementById('quickSearch').value.trim();
+            if (!q) return;
+            openTab('disease');
+            document.getElementById('diseaseSearch').value = q;
+            searchDisease();
+        };
+
+        // ---------- DISEASE SEARCH ----------
+        window.searchDisease = function() {
+            let q = document.getElementById('diseaseSearch').value.trim().toLowerCase();
+            if (!q) return;
+            let res = document.getElementById('diseaseResult'), loader = document.getElementById('diseaseLoader');
+            res.innerHTML = ''; loader.style.display = 'block';
+            let match = commonDiseases.find(d => d.name.includes(q) || q.includes(d.name) || d.displayName.toLowerCase().includes(q));
+            if (match) {
+                loader.style.display = 'none';
+                res.innerHTML = `<div class="card"><h2 style="color:var(--primary);">${match.displayName}</h2><div><span class="detail-label">🩺 Symptoms</span><p>${match.symptoms}</p></div><div><span class="detail-label">🔬 Causes</span><p>${match.causes}</p></div><div><span class="detail-label">🛡️ Prevention</span><p>${match.prevention}</p></div><div><span class="detail-label">💊 Treatment</span><p>${match.treatment}</p></div><p style="margin-top:1.5rem; font-style:italic; color:#64748b;">Source: MediConnect Medical Database</p></div>`;
+            } else {
+                fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`)
+                    .then(r => r.ok ? r.json() : Promise.reject())
+                    .then(d => {
+                        loader.style.display = 'none';
+                        res.innerHTML = `<div class="card"><h2>${d.title}</h2><p>${d.extract || 'No description.'}</p>${d.thumbnail ? `<img src="${d.thumbnail.source}" style="max-width:100%; margin-top:1rem; border-radius:12px;">` : ''}<p style="margin-top:1rem;"><a href="${d.content_urls?.desktop?.page}" target="_blank">🔗 Read full article</a></p><p style="color:#64748b; margin-top:1rem;"><i class="fas fa-info-circle"></i> Wikipedia summary</p></div>`;
+                    })
+                    .catch(() => {
+                        loader.style.display = 'none';
+                        res.innerHTML = `<div class="card" style="color:#b91c1c;"><i class="fas fa-exclamation-triangle"></i> Disease not found.</div>`;
+                    });
+            }
+        };
+
+        // ---------- MEDICINE SEARCH ----------
+        window.searchMedicine = function() {
+            let q = document.getElementById('medicineSearch').value.trim().toLowerCase();
+            if (!q) return;
+            let res = document.getElementById('medicineResult'), loader = document.getElementById('medicineLoader');
+            res.innerHTML = ''; loader.style.display = 'block';
+            let match = commonMedicines.find(m => m.name.includes(q) || q.includes(m.name) || m.displayName.toLowerCase().includes(q));
+            if (match) {
+                loader.style.display = 'none';
+                res.innerHTML = `<div class="card"><h2 style="color:var(--primary);">${match.displayName}</h2><span style="background:#27ae60; color:white; padding:0.3rem 1rem; border-radius:30px; display:inline-block; margin:0.8rem 0;"><i class="fas fa-rupee-sign"></i> ${match.priceRange}</span><div><span class="detail-label">💡 Uses</span><p>${match.uses}</p></div><div><span class="detail-label">⏰ Dosage</span><p>${match.dosage}</p></div><div><span class="detail-label">⚠️ Side effects</span><p>${match.sideEffects}</p></div><p style="margin-top:1.5rem; font-style:italic; color:#64748b;">Source: MediConnect Medicine Database • Prices are estimates</p></div>`;
+            } else {
+                fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`)
+                    .then(r => r.ok ? r.json() : Promise.reject())
+                    .then(d => {
+                        loader.style.display = 'none';
+                        res.innerHTML = `<div class="card"><h2>${d.title}</h2><p>${d.extract || 'No description.'}</p>${d.thumbnail ? `<img src="${d.thumbnail.source}" style="max-width:100%; margin-top:1rem; border-radius:12px;">` : ''}<p style="margin-top:1rem;"><a href="${d.content_urls?.desktop?.page}" target="_blank">🔗 Read full article</a></p><p style="color:#64748b; margin-top:1rem;"><i class="fas fa-info-circle"></i> Wikipedia summary</p></div>`;
+                    })
+                    .catch(() => {
+                        loader.style.display = 'none';
+                        res.innerHTML = `<div class="card" style="color:#b91c1c;"><i class="fas fa-exclamation-triangle"></i> Medicine not found.</div>`;
+                    });
+            }
+        };
+
+        // ---------- EMERGENCY NUMBERS ----------
+        window.updateEmergencyNumbers = function() {
+            const code = document.getElementById('countrySelect').value;
+            const c = emergencyContacts[code];
+            document.getElementById('ambulanceLink').href = `tel:${c.ambulance.replace(/\D/g,'')}`;
+            document.getElementById('ambulanceLink').innerHTML = `${c.ambulance} <i class="fas fa-phone-alt"></i>`;
+            document.getElementById('policeLink').href = `tel:${c.police.replace(/\D/g,'')}`;
+            document.getElementById('policeLink').innerHTML = `${c.police} <i class="fas fa-phone-alt"></i>`;
+            document.getElementById('fireLink').href = `tel:${c.fire.replace(/\D/g,'')}`;
+            document.getElementById('fireLink').innerHTML = `${c.fire} <i class="fas fa-phone-alt"></i>`;
+            document.getElementById('poisonLink').href = `tel:${c.poison.replace(/\D/g,'')}`;
+            document.getElementById('poisonLink').innerHTML = `${c.poison} <i class="fas fa-phone-alt"></i>`;
+        };
+
+        function populateCountries() {
+            const sel = document.getElementById('countrySelect');
+            sel.innerHTML = Object.keys(emergencyContacts).map(code => `<option value="${code}" ${code==='india'?'selected':''}>${emergencyContacts[code].country}</option>`).join('');
+            updateEmergencyNumbers();
+        }
+
+        // ---------- BLOG GRID POPULATION (links to blog.html?id=X) ----------
+        function populateBlogGrid() {
+            const grid = document.getElementById('blogGrid');
+            if (!grid) return;
+            let html = '';
+            blogMetadata.forEach(article => {
+                html += `<a href="blog.html?id=${article.id}" class="blog-card">
+                    <h3>${article.title}</h3>
+                    <p>${article.summary}</p>
+                    <div class="read-more">
+                        <i class="fas fa-book-open"></i> Read full article
+                    </div>
+                </a>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        // ---------- ON PAGE LOAD ----------
+        window.onload = function() {
+            openTab('home');
+            populateCountries();
+            displayReminders();
+            startReminderChecker();
+            initAudio();
+            // Pre-populate blog grid in case Blogs tab is active on load (not likely)
+            if (document.getElementById('blogs').classList.contains('active')) populateBlogGrid();
+        };
+    </script>
+</body>
+</html>
