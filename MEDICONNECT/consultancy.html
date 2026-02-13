@@ -20,6 +20,8 @@
       --shadow-md: 0 20px 30px -10px rgba(15, 23, 42, 0.15);
       --radius: 22px;
       --radius-sm: 14px;
+      --footer-image: url('https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1600&q=80');
+      --consult-bg-image: url('https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1600&q=80');
     }
 
     * {
@@ -112,6 +114,26 @@
       gap: 1.25rem;
       flex: 1;
     }
+
+    main {
+      position: relative;
+      isolation: isolate;
+      border-radius: var(--radius);
+      overflow: hidden;
+      padding: 1rem;
+    }
+
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(145deg, rgba(15, 23, 42, 0.68), rgba(30, 64, 175, 0.4)), var(--consult-bg-image);
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      transform: scale(1.03);
+    }
+
 
     .card {
       background: var(--card-bg);
@@ -275,12 +297,28 @@
 
 
     footer {
+      position: relative;
       background: var(--secondary);
       color: #cbd5e1;
       text-align: center;
       padding: 2rem 0;
       margin-top: auto;
       border-radius: 40px 40px 0 0;
+      overflow: hidden;
+    }
+
+    footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.88)), var(--footer-image);
+      background-size: cover;
+      background-position: center;
+    }
+
+    footer .container {
+      position: relative;
+      z-index: 1;
     }
 
     footer p {
@@ -372,7 +410,7 @@
   <footer>
     <div class="container">
       <p style="margin-bottom: 0.5rem;">MediConnect – Evidence-based health support</p>
-      <p style="font-size: 0.85rem; opacity: 0.8;">© 2025 • Always consult a qualified doctor.</p>
+      <p style="font-size: 0.85rem; opacity: 0.8;">© 2025 - 2026 MediConnect - Empowering Health Through Technology, All Rights Reserved.</p>
     </div>
   </footer>
 
