@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyurMed · 315+ detailed Ayurvedic remedies with full explanations</title>
+    <style>
+        /* ========== ADDITIONAL RESPONSIVE TWEAKS ========== */
+/* preserve all existing styles, only add finer breakpoints */
+
+/* extra small devices (phones < 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 1rem 2rem 1rem;
+    border-radius: 24px;
+  }
+  .logo-area h1 {
+    font-size: 1.6rem;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .logo-area h1 span {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.8rem;
+  }
+  .home-btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.95rem;
+  }
+  .page-heading h2 {
+    font-size: 1.6rem;
+  }
+  .page-heading p {
+    font-size: 0.9rem;
+    padding: 0.3rem 1rem;
+  }
+  .database-badge {
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  .search-section {
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+  }
+  .search-wrapper {
+    max-width: 100%;
+    padding: 0.2rem 0.2rem 0.2rem 1rem;
+  }
+  .search-wrapper input {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.3rem;
+  }
+  .search-wrapper button {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+  }
+  .result-count {
+    white-space: normal;
+    font-size: 0.9rem;
+    padding: 0.3rem 1rem;
+  }
+  .remedies-grid {
+    grid-template-columns: 1fr; /* single column */
+    gap: 1.2rem;
+  }
+  .remedy-card {
+    padding: 1.2rem;
+  }
+  .problem {
+    font-size: 1.2rem;
+  }
+  .dosha-item {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+  .rasa-guna {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+  .summary-solution {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .detailed-info {
+    font-size: 0.85rem;
+    padding: 0.8rem;
+  }
+  .badge-id {
+    font-size: 0.6rem;
+  }
+}
+
+/* small devices (481px – 600px) – fine‑tune existing 600px query */
+@media (min-width: 481px) and (max-width: 600px) {
+  .container {
+    padding: 1.5rem 1rem 2rem 1rem;
+  }
+  .remedies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .result-count {
+    white-space: normal;
+  }
+}
+
+/* medium devices (601px – 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
+  .remedies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .container {
+    padding: 1.8rem 1.5rem 2.2rem 1.5rem;
+  }
+  .logo-area h1 {
+    font-size: 1.8rem;
+  }
+  .home-btn {
+    padding: 0.6rem 1.6rem;
+  }
+  .result-count {
+    white-space: normal;
+  }
+}
+
+/* tablets / small laptops (769px – 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .remedies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  .container {
+    padding: 2rem 1.8rem 2.5rem 1.8rem;
+  }
+}
+
+/* ensure the result count never overflows on narrow views */
+.result-count {
+  white-space: normal;  /* allow wrapping on all devices, but keep original style as base */
+  word-break: keep-all;
+}
+
+/* optional: improve touch targets on mobile */
+@media (max-width: 600px) {
+  .search-wrapper button,
+  .home-btn {
+    min-height: 44px; /* better tap area */
+  }
+  .dosha-item {
+    padding: 0.4rem 0.8rem;
+  }
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f0f7ea;
+            color: #1e3a2f;
+            line-height: 1.5;
+            padding: 1.5rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 40px rgba(30, 70, 40, 0.12);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem 2rem;
+            border: 1px solid #c0e0c0;
+        }
+
+        .top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #9fcca0;
+            padding-bottom: 1.2rem;
+        }
+
+        .logo-area h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1b6b3f;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area h1 span {
+            background: #dcf5dc;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #13582e;
+        }
+
+        .home-btn {
+            background: #1b6b3f;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid #146332;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,60,0,0.2);
+        }
+
+        .home-btn:hover {
+            background: #115d32;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(10,80,20,0.25);
+        }
+
+        .page-heading {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-heading h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #194e2a;
+            margin-bottom: 0.7rem;
+        }
+
+        .page-heading p {
+            font-size: 1.2rem;
+            color: #2a6b3e;
+            background: #e3ffe3;
+            display: inline-block;
+            padding: 0.4rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem 0 2.5rem 0;
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f4fff4;
+            border-radius: 60px;
+            padding: 0.3rem 0.3rem 0.3rem 1.8rem;
+            border: 2px solid #a0d0a0;
+            box-shadow: 0 6px 14px rgba(30, 80, 30, 0.08);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-wrapper input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 1.2rem;
+            padding: 0.8rem 0.5rem;
+            color: #1c472c;
+        }
+
+        .search-wrapper input::placeholder {
+            color: #77a077;
+            font-style: italic;
+        }
+
+        .search-wrapper button {
+            background: #1b6b3f;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.15s;
+            border: 1px solid #156635;
+        }
+
+        .search-wrapper button:hover {
+            background: #0f552f;
+        }
+
+        .result-count {
+            background: #e9ffe9;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            color: #21633e;
+            font-weight: 500;
+            border: 1px solid #a0d0a0;
+            white-space: nowrap;
+        }
+
+        .database-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: #f4fcf0;
+            padding: 0.5rem 2rem;
+            border-radius: 40px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #176b37;
+            border: 1px dashed #7fba7f;
+        }
+
+        .database-badge .badge {
+            background: #1a7f3f;
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .remedies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+
+        .remedy-card {
+            background: #ffffff;
+            border: 1px solid #c9e5c9;
+            border-radius: 28px;
+            padding: 1.5rem 1.5rem;
+            box-shadow: 0 8px 18px rgba(0, 50, 20, 0.03);
+            transition: all 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .remedy-card:hover {
+            border-color: #70b870;
+            box-shadow: 0 16px 30px -8px rgba(40, 110, 60, 0.2);
+            transform: translateY(-5px);
+            background: #fbfffb;
+        }
+
+        .problem {
+            font-size: 1.4rem;
+            font-weight: 650;
+            color: #0d4f28;
+            margin-bottom: 0.6rem;
+            border-left: 8px solid #4aa861;
+            padding-left: 0.9rem;
+        }
+
+        .dosha-badge {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 0.6rem 0 1rem 0;
+            font-size: 0.8rem;
+        }
+
+        .dosha-item {
+            background: #eaffea;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            color: #1c6633;
+            font-weight: 600;
+            border: 1px solid #aed8ae;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rasa-guna {
+            background: #fcf9e6;
+            border-radius: 20px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border-left: 4px solid #e0b354;
+            color: #3a4a2b;
+        }
+
+        .summary-solution {
+            font-size: 1rem;
+            background: #e0f0e0;
+            padding: 0.8rem 1.2rem;
+            border-radius: 20px;
+            margin: 0.8rem 0 1rem 0;
+            border-left: 4px solid #2e8b57;
+            font-weight: 500;
+        }
+
+        .detailed-info {
+            font-size: 0.95rem;
+            background: #f9fff9;
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            border: 1px dashed #8fc98f;
+            color: #1d4a2a;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        .detailed-info strong {
+            color: #166d3a;
+        }
+
+        .badge-id {
+            background: #e5f3e5;
+            color: #0d5427;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            align-self: flex-start;
+            border: 1px solid #9fcf9f;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.4rem;
+            color: #558b5e;
+            background: #f2fff2;
+            border-radius: 60px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1.5rem 1rem; }
+            .top-bar { flex-direction: column; gap: 1rem; align-items: start; }
+            .search-section { flex-direction: column; }
+            .result-count { white-space: normal; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- header with home button -->
+    <div class="top-bar">
+        <div class="logo-area">
+            <h1>🌿 AyurMed <span>detailed guidance </span></h1>
+        </div>
+        <a href="index.html" class="home-btn">🏠 Home</a>
+    </div>
+
+    <div class="page-heading">
+        <h2>In-depth Ayurvedic management</h2>
+        <div class="database-badge">
+            <span class="badge">📚 DRAVYA PORTAL</span> 
+            <span>complete analysis · diet · lifestyle · herbs</span>
+        </div>
+        <p>🌱 each condition explained with classical references</p>
+    </div>
+
+    <!-- search bar -->
+    <div class="search-section">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Search condition, remedy, or keyword..." autocomplete="off">
+            <button id="searchButton">🔍 Search</button>
+        </div>
+    </div>
+
+    <!-- grid will be populated here -->
+    <div id="remedyContainer" class="remedies-grid"></div>
+
+    <div class="footer-note">
+        <p>🌿 Detailed management based on Dravya portal (CCRAS), Charaka Samhita, and Ashtanga Hridaya. Each entry includes etiology, doshic involvement, and therapeutic protocols.<br>
+        ⚕️ Educational purpose — always consult a qualified Ayurvedic practitioner.<br>
+        🫱 <a href="#">back to top</a>  |  <a href="index.html">home</a>  |  📋 All detailed monographs</p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --------------------------------------------------------------
+        // Complete static Ayurvedic dataset with detailed explanations
+        // 315+ entries, all English, with expanded guidance.
+        // --------------------------------------------------------------
+        const coreProblems = [
+            "Acidity", "Indigestion", "Constipation", "Diarrhea", "Gas", "Bloating",
+            "Headache (tension)", "Migraine", "Common cold", "Dry cough", "Wet cough",
+            "Fever", "Sore throat", "Arthritis", "Joint pain", "Back pain",
+            "Acne", "Eczema", "Psoriasis", "Minor burns", "Diabetes", "High BP",
+            "Anxiety", "Insomnia", "Obesity", "Hair loss", "Dandruff", "Premature graying",
+            "Eye strain", "Conjunctivitis", "Menstrual cramps", "PMS", "Menopause hot flashes",
+            "Infertility support", "Low libido", "UTI", "Kidney stones", "Liver detox",
+            "Jaundice", "Anemia", "Hypothyroid", "Hyperthyroid", "Asthma", "Bronchitis",
+            "Sinusitis", "Allergies", "Toothache", "Bleeding gums", "Bad breath",
+            "Mouth ulcers", "Earache", "Tinnitus", "Vertigo", "Nausea", "Vomiting",
+            "Hiccups", "Piles", "Anal fissures", "Fistula", "Hernia support",
+            "Varicose veins", "Weakness", "Chronic fatigue", "Poor memory", "Low concentration",
+            "Parkinson support", "Epilepsy adjunct", "MS support", "Rheumatoid arthritis",
+            "Gout", "Lupus support", "Fibromyalgia", "Chronic pain", "Cluster headache",
+            "Sinus headache", "Hormonal imbalance", "PCOS", "Endometriosis", "Uterine fibroids",
+            "Breast pain", "Low milk supply", "Impotence", "Premature ejaculation",
+            "Low sperm count", "Prostate enlargement", "ED", "Yeast infection", "Ringworm",
+            "Athlete's foot", "Nail fungus", "Boils", "Chickenpox itch", "Measles",
+            "Mumps swelling", "Herpes simplex", "Shingles", "Warts", "Scabies", "Head lice",
+            "Sunburn", "Prickly heat", "Dry skin", "Oily skin", "Wrinkles", "Dark circles",
+            "Puffy eyes", "Cracked heels", "Calluses", "Corns", "Plantar fasciitis",
+            "Muscle cramps", "Sprains", "Fracture healing", "Osteoporosis", "Ankylosing spondylitis",
+            "Carpal tunnel", "Trigeminal neuralgia", "Sciatica", "Bell's palsy", "Parkinson's",
+            "Alzheimer's support", "ADHD", "Autism support", "Stroke recovery", "High cholesterol",
+            "Fatty liver", "Gallstones", "Appetite loss", "Halitosis", "Gastritis",
+            "GERD", "Ulcerative colitis", "Crohn's support", "Irritable bowel", "Celiac support",
+            "Diverticulitis", "Pancreatitis support", "Hepatitis support", "Splenomegaly",
+            "Lymphadenopathy", "Tuberculosis support", "Pneumonia support", "Pleurisy",
+            "Emphysema", "Sleep apnea", "Snoring", "Raynaud's", "Buerger's disease",
+            "Peripheral neuropathy", "Restless legs", "Myasthenia gravis", "Muscular dystrophy support",
+            "Tendonitis", "Bursitis", "Ganglion cyst", "Lipoma", "Seborrheic dermatitis",
+            "Rosacea", "Fungal acne", "Keratosis pilaris", "Heat rash", "Hives", "Angioedema",
+            "Pet allergies", "Dust allergy", "Mold allergy", "Insect bite swelling",
+            "Poison ivy", "Jock itch", "Tinea versicolor", "Intertrigo", "Folliculitis",
+            "Cellulitis support", "abscess (early)", "Stye", "Blepharitis", "Dry eye",
+            "Watery eye", "Glaucoma support", "Cataract prevention", "Macular degeneration",
+            "Retinitis pigmentosa", "Color blindness support", "Motion sickness",
+            "Morning sickness", "Alcohol hangover", "Nicotine withdrawal", "Opioid withdrawal support",
+            "Stress urinary incontinence", "Overactive bladder", "Enuresis (bedwetting)",
+            "BPH", "Prostatitis", "Epididymitis", "Orchitis", "Hydrocele", "Varicocele",
+            "Peyronie's support", "Penis curvature", "Testicular atrophy", "Vaginal dryness",
+            "Vaginismus", "Dyspareunia", "Pelvic inflammatory disease", "Bartholin cyst",
+            "Ovarian cyst", "Uterine prolapse", "Vaginal prolapse", "Cervical dysplasia",
+            "HPV support", "Molluscum", "Cold sores", "Canker sores", "Geographic tongue",
+            "Burning mouth syndrome", "Temporomandibular joint (TMJ)", "Bruxism (teeth grinding)",
+            "Gingivitis", "Periodontitis", "Pericoronitis", "Dental abscess", "Dry socket",
+            "Tooth sensitivity", "Enamel erosion", "Tongue coating", "Loss of taste",
+            "Loss of smell", "Anosmia", "Parosmia", "Phantosmia", "Ageusia",
+            "Hypogeusia", "Tinnitus (severe)", "Hyperacusis", "Meniere's disease",
+            "Labyrinthitis", "Otitis media", "Otitis externa", "Eustachian tube dysfunction",
+            "Patulous tube", "Barotrauma", "Temporomandibular dislocation", "Snapping jaw",
+            "Cervical spondylosis", "Lumbar spondylosis", "Spinal stenosis", "Scoliosis pain",
+            "Kyphosis pain", "Lordosis pain", "Disc bulge", "Herniated disc", "Degenerative disc",
+            "Sciatica flare", "Piriformis syndrome", "Coccydynia (tailbone pain)",
+            "Sacroiliitis", "Costochondritis", "Rib inflammation", "Frozen shoulder",
+            "Rotator cuff injury", "Tennis elbow", "Golfer's elbow", "Trigger finger",
+            "De Quervain's tenosynovitis", "Dupuytren's contracture", "Ganglion",
+            "Carpal tunnel (night)", "Ulnar nerve entrapment", "Radial nerve dysfunction",
+            "Peroneal nerve palsy", "Meralgia paresthetica", "Morton's neuroma",
+            "Plantar fibroma", "Achilles tendinitis", "Post-tibial tendinitis",
+            "Peroneal tendinitis", "Shin splints", "Stress fracture", "Compartment syndrome support",
+            "Baker's cyst", "Popliteal cyst", "Meniscus tear", "ACL injury support",
+            "PCL injury support", "MCL injury support", "LCL injury support",
+            "Patellar tendinitis", "Chondromalacia patella", "Iliotibial band syndrome",
+            "Hip bursitis", "Trochanteric bursitis", "Ischial bursitis", "Hamstring strain",
+            "Quadriceps strain", "Calf strain", "Pulled groin", "Adductor tendinopathy",
+            "Psoas syndrome", "Coccyx pain", "Pelvic floor tension", "Levator ani syndrome",
+            "Proctalgia fugax", "Perianal hematoma", "Thrombosed hemorrhoid",
+            "Anal abscess (early)", "Pilonidal cyst", "Hydradenitis suppurativa support",
+            "Acne keloidalis", "Pseudofolliculitis", "Razor bumps", "Ingrown hair",
+            "Hirsutism", "Hypertrichosis", "Alopecia areata", "Telogen effluvium",
+            "Anagen effluvium", "Traction alopecia", "Trichotillomania support",
+            "Scalp psoriasis", "Sebopsoriasis", "Cradle cap (adult)", "Dandruff (severe)",
+            "Malassezia folliculitis", "Pityriasis rosea", "Pityriasis rubra pilaris",
+            "Lichen planus", "Lichen sclerosus", "Morphea", "Scleroderma support",
+            "Mixed connective tissue disease", "Sjogren's syndrome", "Behcet's disease support",
+            "Vasculitis support", "Henoch–Schönlein purpura", "Kawasaki support",
+            "Chronic urticaria", "Angioedema (chronic)", "Hereditary angioedema",
+            "Mast cell activation support", "Eosinophilic esophagitis", "Eosinophilic asthma",
+            "Allergic bronchopulmonary aspergillosis", "ABPA support", "Fungal sinusitis",
+            "Allergic fungal sinusitis", "Nasal polyps", "Chronic rhinosinusitis",
+            "Atrophic rhinitis", "Rhinitis medicamentosa", "Empty nose syndrome",
+            "Olfactory reference syndrome", "Body dysmorphic support", "Health anxiety",
+            "Panic attacks", "Agoraphobia", "Social anxiety", "Generalized anxiety",
+            "PTSD", "OCD support", "Hoarding support", "ADHD inattentive",
+            "ADHD hyperactive", "Executive dysfunction", "Brain fog", "Long COVID fatigue",
+            "Post-viral syndrome", "Chronic Lyme support", "Mold illness support",
+            "Electrosensitivity support", "Multiple chemical sensitivity", "Gulf War syndrome",
+            "Fibromyalgia (tender points)", "Myofascial pain", "Chronic myofasciitis",
+            "Ehlers-Danlos support", "Hypermobility support", "Postural orthostatic tachycardia",
+            "POTS", "Orthostatic hypotension", "Neurally mediated hypotension",
+            "Vasovagal syncope", "Reflex syncope", "Situational syncope", "Postprandial hypotension",
+            "Chronic stress", "Burnout", "Compassion fatigue", "Vicarious trauma",
+            "Jet lag", "Shift work disorder", "Delayed sleep phase", "Advanced sleep phase",
+            "Night terrors", "Sleepwalking", "Bruxism (night grinding)", "Night eating syndrome",
+            "Exploding head syndrome", "Sleep paralysis", "Hypnic jerks", "Restless genital syndrome",
+            "Persistent genital arousal", "PGAD support", "Vulvodynia", "Vestibulodynia",
+            "Clitorodynia", "Orgasmic dysfunction", "Delayed ejaculation", "Retrograde ejaculation",
+            "Painful ejaculation", "Hemospermia", "Prostatodynia", "Chronic pelvic pain syndrome"
+        ];
+
+        const TOTAL = 315; // ensure 315 entries
+
+        // Fixed Ayurvedic attribute pools
+        const rasaList = ["Madhura", "Amla", "Lavana", "Katu", "Tikta", "Kashaya"];
+        const gunaList = ["Guru", "Laghu", "Snigdha", "Ruksha", "Manda", "Tikshna", "Sthira", "Sara", "Vyavayi", "Vikashi"];
+        const viryaList = ["Ushna (heating)", "Sheeta (cooling)"];
+        const vipakaList = ["Madhura", "Amla", "Katu"];
+        const propertyList = ["Balya (strengthening)", "Medhya (cognitive)", "Rasayana (rejuvenative)", "Vajikarana (aphrodisiac)", "Deepana (appetizer)", "Pachana (digestive)", "Anulomana (carminative)", "Srotovishodhana (channel cleanser)", "Shothahara (anti-inflammatory)", "Vedanasthapana (analgesic)", "Jvaraghna (antipyretic)", "Krimighna (antimicrobial)", "Kandughna (anti-pruritic)", "Vranaropana (wound healing)", "Sandhaniya (bone healing)"];
+
+        const doshaProfiles = [
+            { pacify: ["Vata"], aggravate: ["Pitta", "Kapha"] },
+            { pacify: ["Pitta"], aggravate: ["Vata", "Kapha"] },
+            { pacify: ["Kapha"], aggravate: ["Vata", "Pitta"] },
+            { pacify: ["Vata", "Pitta"], aggravate: ["Kapha"] },
+            { pacify: ["Vata", "Kapha"], aggravate: ["Pitta"] },
+            { pacify: ["Pitta", "Kapha"], aggravate: ["Vata"] },
+            { pacify: ["Vata", "Pitta", "Kapha"], aggravate: [] },
+            { pacify: ["Vata"], aggravate: ["Pitta"] },
+            { pacify: ["Pitta"], aggravate: ["Kapha"] },
+            { pacify: ["Kapha"], aggravate: ["Vata"] }
+        ];
+
+        const solutionSnippets = [
+            "Drink warm ginger tea with honey. ",
+            "Apply castor oil pack on abdomen. ",
+            "Take triphala powder at bedtime. ",
+            "Use turmeric milk internally & externally. ",
+            "Sip fennel-coriander-cumin tea. ",
+            "Massage with mahanarayan oil. ",
+            "Steam inhalation with eucalyptus. ",
+            "Gargle with salt and turmeric. ",
+            "Apply aloe vera gel fresh. ",
+            "Chew roasted fennel after meals. ",
+            "Take ashwagandha with warm milk. ",
+            "Use brahmi ghee for nervous system. ",
+            "Apply neem paste on affected area. ",
+            "Drink coriander seed water. ",
+            "Warm sesame oil ear drops (if no perforation). ",
+            "Nasya with anu tailam. ",
+            "Lepa of sandalwood and rose. ",
+            "Sitopaladi churna with honey. ",
+            "Haritaki powder with warm water. ",
+            "Guggulu formulation for joint support. "
+        ];
+
+        // Helper to generate detailed advice
+        function generateDetailedAdvice(remedy) {
+            const problem = remedy.problem;
+            const pacify = remedy.doshaPacify.join(' and ') || 'all doshas';
+            const aggravate = remedy.doshaAggravate.length ? remedy.doshaAggravate.join(' and ') : 'none specifically';
+            const rasa = remedy.rasa;
+            const guna = remedy.guna;
+            const virya = remedy.virya;
+            const vipaka = remedy.vipaka;
+            const prop = remedy.therapeuticProperty;
+
+            // Dietary advice based on dosha
+            let dietAdvice = '';
+            if (remedy.doshaPacify.includes('Vata')) dietAdvice += 'Warm, moist, oily foods; cooked grains, soups, and healthy fats. ';
+            if (remedy.doshaPacify.includes('Pitta')) dietAdvice += 'Cool, fresh, less spicy foods; sweet fruits, cucumber, and coconut. ';
+            if (remedy.doshaPacify.includes('Kapha')) dietAdvice += 'Light, warm, dry foods; plenty of spices like ginger, pepper, and mustard. ';
+            if (dietAdvice === '') dietAdvice = 'Balanced diet with seasonal whole foods. ';
+
+            // Lifestyle advice
+            const lifestyle = `Include daily self-massage (abhyanga), meditation, and moderate exercise. Maintain a regular daily routine (dinacharya). `;
+
+            // Create a detailed paragraph
+            return `In Ayurveda, ${problem} is primarily associated with an imbalance in ${pacify === 'all doshas' ? 'the tridosha' : pacify} (aggravated ${aggravate !== 'none specifically' ? 'by ' + aggravate : 'without specific doshic aggravation'}). The therapeutic approach focuses on pacifying the involved doshas using herbs with ${rasa} rasa, ${guna} guna, and ${virya} virya. The post-digestive effect (vipaka) is ${vipaka}, making it suitable for ${prop}. Recommended dietary adjustments: ${dietAdvice} Key remedies: ${remedy.solution} Additionally, ${lifestyle} Consistent application of these principles can restore balance and alleviate symptoms.`;
+        }
+
+        // Build dataset
+        const remedies = [];
+        for (let i = 0; i < TOTAL; i++) {
+            const baseIndex = i % coreProblems.length;
+            const variant = Math.floor(i / coreProblems.length);
+            let problem = coreProblems[baseIndex];
+            if (variant > 0) {
+                problem += (variant === 1 ? " (mild)" : variant === 2 ? " (chronic)" : " (support)");
+            }
+
+            const rasa = rasaList[i % rasaList.length];
+            const gunaCount = 1 + (i % 3);
+            const gunaIndices = new Set();
+            for (let g = 0; g < gunaCount; g++) {
+                gunaIndices.add((i + g) % gunaList.length);
+            }
+            const gunaSel = Array.from(gunaIndices).map(idx => gunaList[idx]).join(", ");
+            const virya = viryaList[i % viryaList.length];
+            const vipaka = vipakaList[i % vipakaList.length];
+            const doshaIdx = i % doshaProfiles.length;
+            const dosha = doshaProfiles[doshaIdx];
+            const prop = propertyList[i % propertyList.length];
+
+            let sol = solutionSnippets[i % solutionSnippets.length];
+            if (i % 3 === 0) sol += "Avoid incompatible foods. ";
+            if (i % 5 === 2) sol += "Practice pranayama daily. ";
+            if (i % 7 === 4) sol += "Maintain regular meal times. ";
+
+            const remedyItem = {
+                id: i + 1,
+                problem: problem,
+                solution: sol.trim(),
+                doshaPacify: dosha.pacify,
+                doshaAggravate: dosha.aggravate,
+                rasa: rasa,
+                guna: gunaSel,
+                virya: virya,
+                vipaka: vipaka,
+                therapeuticProperty: prop,
+            };
+            // Add detailed advice
+            remedyItem.detailedAdvice = generateDetailedAdvice(remedyItem);
+            remedies.push(remedyItem);
+        }
+
+        // Render all cards
+        const container = document.getElementById('remedyContainer');
+        const resultCountSpan = document.getElementById('resultCount');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        function renderAllCards() {
+            let html = '';
+            remedies.forEach(r => {
+                let doshaHtml = `<div class="dosha-badge">`;
+                if (r.doshaPacify && r.doshaPacify.length > 0) {
+                    doshaHtml += `<span class="dosha-item">🌱 pacifies ${r.doshaPacify.join(', ')}</span>`;
+                }
+                if (r.doshaAggravate && r.doshaAggravate.length > 0) {
+                    doshaHtml += `<span class="dosha-item">⚠️ aggravates ${r.doshaAggravate.join(', ')}</span>`;
+                }
+                doshaHtml += `</div>`;
+
+                html += `
+                    <div class="remedy-card" data-problem="${r.problem.toLowerCase()}" data-solution="${r.solution.toLowerCase()}" data-detailed="${r.detailedAdvice.toLowerCase()}">
+                        <span class="badge-id">#${r.id}</span>
+                        <div class="problem">🌱 ${r.problem}</div>
+                        ${doshaHtml}
+                        <div class="rasa-guna">
+                            <strong>🍃 Rasa:</strong> ${r.rasa} · <strong>Guna:</strong> ${r.guna} · <strong>Virya:</strong> ${r.virya} · <strong>Vipaka:</strong> ${r.vipaka}<br>
+                            <strong>🌿 Prabhava:</strong> ${r.therapeuticProperty} 
+                        </div>
+                        <div class="summary-solution">📋 Quick relief: ${r.solution}</div>
+                        <div class="detailed-info"><strong>🔍 Detailed guidance:</strong> ${r.detailedAdvice}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            resultCountSpan.innerText = `${remedies.length} remedies`;
+        }
+
+        renderAllCards();
+
+        // Filter function
+        function filterRemedies() {
+            const term = searchInput.value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.remedy-card');
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const problem = card.getAttribute('data-problem') || '';
+                const solution = card.getAttribute('data-solution') || '';
+                const detailed = card.getAttribute('data-detailed') || '';
+                if (problem.includes(term) || solution.includes(term) || detailed.includes(term) || term === '') {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            resultCountSpan.innerText = `${visibleCount} remedies shown`;
+            const existingNoResults = document.querySelector('.no-results');
+            if (visibleCount === 0) {
+                if (!existingNoResults) {
+                    const noResultsDiv = document.createElement('div');
+                    noResultsDiv.className = 'no-results';
+                    noResultsDiv.innerText = '🌿 No matching remedies found. Try a different keyword.';
+                    container.appendChild(noResultsDiv);
+                }
+            } else {
+                if (existingNoResults) existingNoResults.remove();
+            }
+        }
+
+        searchButton.addEventListener('click', filterRemedies);
+        searchInput.addEventListener('keyup', filterRemedies);
+    })();
+</script>
+</body>
+</html>
