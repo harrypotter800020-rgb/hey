@@ -107,10 +107,32 @@
         .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.9rem; margin: 1rem 0; }
         .feature-item { background: #eff6ff; border: 1px solid #c7dbff; border-radius: 999px; padding: 0.75rem 1.1rem; text-align: center; }
 
+        /* Enhanced team table with photo column */
         .team-table { width: 100%; border-collapse: collapse; margin-top: 1rem; overflow: hidden; border-radius: 16px; }
         .team-table thead { background: #2563eb; color: white; }
-        .team-table th, .team-table td { padding: 0.9rem 1rem; text-align: left; }
+        .team-table th, .team-table td { padding: 0.9rem 0.8rem; text-align: left; vertical-align: middle; }
         .team-table td { border-bottom: 1px solid #dbeafe; background: #f8fbff; }
+        
+        .team-photo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #e2e8f0; /* soft fallback */
+            display: block;
+        }
+        /* for name + image inline alternative – but we keep separate column */
+        .team-table td:first-child {
+            font-weight: 500;
+        }
+        /* make table scrollable on small screens */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+        }
 
         .map-container { margin-top: 1rem; border-radius: 18px; overflow: hidden; border: 1px solid #bfdbfe; }
         .map-container iframe { width: 100%; height: 330px; border: 0; display: block; }
@@ -140,6 +162,8 @@
             .nav-badge { display: none; }
             .page-heading h2 { font-size: 1.6rem; }
             .card { padding: 1.2rem; }
+            .team-table th, .team-table td { padding: 0.7rem 0.4rem; }
+            .team-photo { width: 36px; height: 36px; }
         }
     </style>
 </head>
@@ -192,21 +216,66 @@
             </div>
         </div>
 
+        <!-- Our Team card with photo column added -->
         <div class="card">
             <h3><i class="fas fa-users"></i> Our Team (3rd Year, 6th Semester)</h3>
-            <table class="team-table">
-                <thead>
-                    <tr><th>Name</th><th>Registration No.</th><th>Role / Contribution</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><strong>Damodar Kumar</strong></td><td>F23029007035</td><td>Team Lead & Backend Integration</td></tr>
-                    <tr><td><strong>Aditya Anand</strong></td><td>F23029007007</td><td>Frontend Development & UI/UX</td></tr>
-                    <tr><td><strong>Manish Sahu</strong></td><td>F23029007051</td><td>Database & Content Management</td></tr>
-                    <tr><td><strong>Hafijul Khan</strong></td><td>F23029007039</td><td>API Integration & Testing</td></tr>
-                    <tr><td><strong>Brijesh Pathak</strong></td><td>F23029007031</td><td>Feature Implementation & Documentation</td></tr>
-                </tbody>
-            </table>
-            <p style="margin-top: 1rem;"><strong><i class="fas fa-chalkboard-teacher"></i> Project Guide:</strong> Ipsita Ankita Hota</p>
+            <div class="table-responsive">
+                <table class="team-table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th> <!-- new column for images -->
+                            <th>Name</th>
+                            <th>Registration No.</th>
+                            <th>Role / Contribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <!-- image filename matches member name: "Damodar Kumar.png" (place in images/ folder) -->
+                                <img src="images/Damodar Kumar.png" alt="Damodar Kumar" class="team-photo" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=DK';">
+                            </td>
+                            <td><strong>Damodar Kumar</strong></td>
+                            <td>F23029007035</td>
+                            <td>Team Lead & Backend Integration</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="images/Aditya Anand.png" alt="Aditya Anand" class="team-photo" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=AA';">
+                            </td>
+                            <td><strong>Aditya Anand</strong></td>
+                            <td>F23029007007</td>
+                            <td>Frontend Development & UI/UX</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="images/Manish Sahu.png" alt="Manish Sahu" class="team-photo" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=MS';">
+                            </td>
+                            <td><strong>Manish Sahu</strong></td>
+                            <td>F23029007051</td>
+                            <td>Database & Content Management</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="images/Hafijul Khan.png" alt="Hafijul Khan" class="team-photo" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=HK';">
+                            </td>
+                            <td><strong>Hafijul Khan</strong></td>
+                            <td>F23029007039</td>
+                            <td>API Integration & Testing</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="images/Brijesh Pathak.png" alt="Brijesh Pathak" class="team-photo" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=BP';">
+                            </td>
+                            <td><strong>Brijesh Pathak</strong></td>
+                            <td>F23029007031</td>
+                            <td>Feature Implementation & Documentation</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size:0.95rem;"><i class="fas fa-info-circle"></i> Place member photos in <code>images/</code> folder named exactly as above (e.g., <code>Damodar Kumar.png</code>). A placeholder icon will show if image is missing.</p>
+            <p style="margin-top: 0.8rem;"><strong><i class="fas fa-chalkboard-teacher"></i> Project Guide:</strong> Ipsita Ankita Hota</p>
         </div>
 
         <div class="card">
